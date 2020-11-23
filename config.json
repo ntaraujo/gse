@@ -1,9 +1,0 @@
-{
-  "input": "~/Videos/gse/input.mp4",
-  "output": "~/Videos/gse/output.mp4",
-  "width": 0,
-
-  "speed": 0,
-  "greenscreen": true,
-  "mask": false
-}
