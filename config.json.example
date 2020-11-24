@@ -1,30 +1,30 @@
 {
-  "input": "oldvideo.mp4",
-  "_comment0": "(string) the path to your existent video",
+  "input": "old_one.mp4",
+  "_comment0": "(string) the path to your existent video/image",
 
   "output_dir": "",
   "_comment1": "(string) directory to output videos, images, temporary files and/or logs. Need a '/' in the end. If empty, defaults to current directory",
 
-  "output_name": "newvideo",
+  "output_name": "new_one",
   "_comment2": "(string) {output_name}.{extension} will be the file name and {this last}.log the log file name if any",
 
   "extension": "mp4",
-  "_comment3": "(string) must correspond to the video_codec. e.g 'mp4'",
+  "_comment3": "(string) video/image formats. If video, must correspond to the video_codec. e.g 'mp4' and 'jpg'",
 
   "video_codec": null,
   "_comment4": "(null, string) any codec supported by FFMPEG. e.g. 'libx264' and 'mpeg4'. If null, defaults to the recommended for the extension",
 
   "audio_codec": null,
-  "_comment5": "(null, string) if null, the default is 'libmp3lame', unless the video extension is 'ogv' or 'webm', at which case the default is 'libvorbis'",
+  "_comment5": "(null, string) if null, the default for video extensions is 'libmp3lame' unless be 'ogv' or 'webm', at which case the default is 'libvorbis'",
 
-  "background": "",
-  "_comment6": "(string, list) a path to an image/video or a RGB color. e.g. [0, 255, 0]. If empty the output video is a mask you can use in another editor",
+  "background": [0, 255, 0],
+  "_comment6": "(string, list) path to an image/video or a RGB color. e.g. [0, 255, 0]. If empty the output is a mask you can use in another editor",
 
   "relative_mask_resolution": 100,
-  "_comment7": "(integer, float) in percent. Your video resolution is not effected but the one A.I. will analyse yes",
+  "_comment7": "(integer, float) in percent. Final resolution is not effected but the one A.I. will analyse yes",
 
   "relative_mask_fps": 100,
-  "_comment8": "(integer, float) in percent. Your video fps is not effected but the amount of frames A.I. will analyse yes",
+  "_comment8": "(integer, float) in percent. Final fps is not effected but the amount of video frames A.I. will analyse yes",
 
   "threads": 4,
   "_comment9": "(integer) can speed up the writing of the video on multicore computers but may have performance limited by CUDA",
@@ -33,7 +33,7 @@
   "_comment10": "(boolean) run A.I. image processing in CUDA if is available",
 
   "compression": "medium",
-  "_comment11": "(string) time FFMPEG will spend optimizing the compression. Choices are: 'ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow' and 'placebo'",
+  "_comment11": "(string) time FFMPEG will spend optimizing video compression. Choices are: 'ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow', 'slower', 'veryslow' and 'placebo'",
 
   "scaler": "bicubic",
   "_comment12": "(string) the algorithm used for resizing. e.g. 'bilinear' and 'fast_bilinear'. See https://ffmpeg.org/ffmpeg-scaler.html",
@@ -45,5 +45,8 @@
   "_comment14": "(boolean) write a log file in {output_dir}{output_name}.{extension}.log",
 
   "get_frame": 0,
-  "_comment15": "(integer) if not 0 will save the file {output_dir}{output_name}_{get_frame}.jpg with the given edited frame and exit"
+  "_comment15": "(integer) if not 0 will save the file {output_dir}{output_name}.jpg with the given edited video frame and exit",
+
+  "mask": "",
+  "_comment16": "(string) the path to a video you want to use as the mask instead of I.A. generated one. Leave empty to disable"
 }
