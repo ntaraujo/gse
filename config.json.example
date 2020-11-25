@@ -20,10 +20,10 @@
   "background": [0, 255, 0],
   "_comment6": "(string, list) path to an image/video or a RGB color. e.g. [0, 255, 0]. If empty the output is a mask you can use in another editor",
 
-  "relative_mask_resolution": 100,
+  "relative_mask_resolution": 80,
   "_comment7": "(integer, float) in percent. Final resolution is not effected but the one A.I. will analyse yes",
 
-  "relative_mask_fps": 100,
+  "relative_mask_fps": 50,
   "_comment8": "(integer, float) in percent. Final fps is not effected but the amount of video frames A.I. will analyse yes",
 
   "threads": 4,
