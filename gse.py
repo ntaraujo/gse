@@ -4,9 +4,9 @@ from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
 from torchvision import transforms
 import json
 from moviepy.video.fx.loop import loop
-from moviepy.video.fx.resize import resize
 import time
 import imghdr
+import dill
 
 
 class MakeMask:
@@ -65,110 +65,159 @@ class MakeMask:
 
 
 class Process:
-    def __init__(self, config):  # set variables
-        self.inp = config["input"]
+    def __init__(self, conf=None):  # set variables
+        if not conf:
+            config = {'input': 'old_one.mp4',
+                      'output_dir': '',
+                      'output_name': 'new_one',
+                      'extension': 'mp4',
+                      'video_codec': None,
+                      'audio_codec': None,
+                      'background': [0, 255, 0],
+                      'relative_mask_resolution': 80,
+                      'relative_mask_fps': 50,
+                      'threads': 4,
+                      'cuda': True,
+                      'compression': 'medium',
+                      'scaler': 'bicubic',
+                      'monitor': 'bar',
+                      'log': False,
+                      'get_frame': 0,
+                      'mask': ''}
+        else:
+            config = conf
+
+        self.input = config["input"]
         self.scaler = config["scaler"]
-        self.premask = config["mask"]
-        self.res = config["relative_mask_resolution"] * 0.01
-        self.fps = config["relative_mask_fps"] * 0.01
+        self.mask = config["mask"]
+        self.relative_mask_resolution = config["relative_mask_resolution"]
+        self.relative_mask_fps = config["relative_mask_fps"]
         self.cuda = config["cuda"]
-        self.bg = config["background"]
-        self.dir = config["output_dir"]
-        self.name = config["output_name"]
-        self.ext = config["extension"]
-        self.f = config["get_frame"]
-        self.logger = config["monitor"]
+        self.background = config["background"]
+        self.output_dir = config["output_dir"]
+        self.output_name = config["output_name"]
+        self.extension = config["extension"]
+        self.monitor = config["monitor"]
         self.audio_codec = config["audio_codec"]
-        self.write_logfile = config["log"]
+        self.log = config["log"]
         self.threads = config["threads"]
-        self.filename = f'{self.dir}{self.name}.{self.ext}'
-        self.temp_audiofile = f'{self.dir}TEMP_{self.name}.mp3'
-        self.codec = config["video_codec"]
-        self.preset = config["compression"]
-        self.imgext = "jpg"
+        self.video_codec = config["video_codec"]
+        self.compression = config["compression"]
+        self.get_frame = config["get_frame"]
 
-    def get_input(self):
-        if not imghdr.what(self.inp):  # if video
-            print(f"Loading {self.inp} as the main video source")
-            clip = VideoFileClip(self.inp, resize_algorithm=self.scaler)
-        else:  # if image
-            print(f"Loading {self.inp} as the main image source")
-            clip = ImageClip(self.inp, duration=0.1)
+        self.res = self.relative_mask_resolution * 0.01
+        self.fps = self.relative_mask_fps * 0.01
+        self.filename = f'{self.output_dir}{self.output_name}.{self.extension}'
+        self.temp_audiofile = f'{self.output_dir}TEMP_{self.output_name}.mp3'
+        if self.monitor == "gui":
+            self.logger = "bar"  # yet
+        else:
+            self.logger = self.monitor
+        if self.input != "old_one.mp4" and not imghdr.what(self.input):
+            self.imgext = "jpg"
+            self.f = self.get_frame
+        else:
+            self.imgext = self.extension
             self.f = 1
-            self.imgext = self.ext
-        return clip
 
-    def get_mask(self, clip):
-        if self.premask != "":  # if given
-            if imghdr.what(self.premask):  # image
-                print(f"Loading the image {self.premask} as the mask for {self.inp}")
-                mask = ImageClip(self.premask, duration=clip.duration)
+    def oinput(self):
+        if not imghdr.what(self.input):  # if video
+            print(f"Loading {self.input} as the main video source")
+            self.input_clip = VideoFileClip(self.input, resize_algorithm=self.scaler)
+        else:  # if image
+            print(f"Loading {self.input} as the main image source")
+            self.input_clip = ImageClip(self.input, duration=1).set_fps(1)
+
+    def omask(self):
+        if self.mask != "":  # if given
+            if imghdr.what(self.mask):  # image
+                print(f"Loading the image {self.mask} as the mask for {self.input}")
+                self.mask_clip = ImageClip(self.mask, duration=self.input_clip.duration)
             else:  # video
-                print(f"Loading the video {self.premask} as the mask for {self.inp}")
-                mask = VideoFileClip(self.premask, resize_algorithm=self.scaler)
+                print(f"Loading the video {self.mask} as the mask for {self.input}")
+                self.mask_clip = VideoFileClip(self.mask, resize_algorithm=self.scaler)
         else:  # if result of A.I.
-            processclip = clip.copy()
-            if self.res != 1:  # resize if asked
-                processclip = self.resize(processclip, self.res, self.scaler)
-            if self.fps != 1:  # change fps if asked
-                processclip = self.refps(processclip, self.fps)
-            mask = processclip.fl_image(MakeMask(self.cuda))
-        return mask
+            processclip = self.input_clip.copy()
+            if self.fps != 1:  # if asked to change fps
+                newfps = self.input_clip.fps * self.fps
+                processclip = processclip.set_fps(newfps)
+                print(f"Mask fps decreased in {(1 - self.fps) * 100}%. {processclip.fps}fps now")
+            if self.res != 1:  # if asked to resize
+                processclip = processclip.resize(self.res)
+                w = processclip.size[0]
+                h = processclip.size[1]
+                print(f"Mask resolution decreased in {(1 - self.res) * 100}%, {w}x{h} now")
+            self.mask_clip = processclip.fl_image(MakeMask(self.cuda))
 
-    def apply(self, clip, mask):  # if background
-        if self.bg == "":  # no exists, skip compositing
-            print("No background selected, exporting the black and white mask")
-            final = mask
-            audio = False
-        else:  # exists, use
-            maskedclip = clip.set_mask(mask.to_mask())
-            if type(self.bg) == list:  # if color
-                rgb = (self.bg[0], self.bg[1], self.bg[2])
-                print(f"Using the RGB color {rgb} as the background of {self.inp}")
-                final = maskedclip.on_color(color=rgb)
-            elif imghdr.what(self.bg):  # if image
-                print(f"Using {self.bg} as image source to the background of {self.inp}")
-                bg = ImageClip(self.bg, duration=maskedclip.duration)
-                final = self.composite(bg, maskedclip)
+    def obackground(self):  # if background
+        if self.background == "":  # no exists
+            print("No background selected, skipping compositing")
+            self.final_clip = self.mask_clip
+            self.audio = False
+        else:  # exists
+            usable_mask = self.mask_clip.resize(newsize=self.input_clip.size).to_mask()
+            maskedclip = self.input_clip.set_mask(usable_mask)
+            if type(self.background) == list:  # if color
+                rgb = (self.background[0], self.background[1], self.background[2])
+                print(f"Using the RGB color {rgb} as the background of {self.input}")
+                self.final_clip = maskedclip.on_color(color=rgb)
+            elif imghdr.what(self.background):  # if image
+                print(f"Using {self.background} as image source to the background of {self.input}")
+                bg = ImageClip(self.background, duration=maskedclip.duration)
+                self.final_clip = self.composite(bg, maskedclip)
             else:  # if video
-                print(f"Using {self.bg} as video source to the background of {self.inp}")
-                bg = VideoFileClip(self.bg, resize_algorithm=self.scaler).fx(loop, duration=maskedclip.duration)
-                final = self.composite(bg, maskedclip)
-            audio = True
-        return final, audio
+                print(f"Using {self.background} as video source to the background of {self.input}")
+                bg = VideoFileClip(self.background, resize_algorithm=self.scaler).fx(loop, duration=maskedclip.duration)
+                self.final_clip = self.composite(bg, maskedclip)
+            self.audio = True
 
-    def save(self, clip, audio):  # save
+    def save_file(self):  # save
         if self.f != 0:  # an image
-            flname = f'{self.dir}{self.name}.{self.imgext}'
-            t = self.f / clip.fps
-            clip.save_frame(flname, t=t, withmask=False)
+            flname = f'{self.output_dir}{self.output_name}.{self.imgext}'
+            tim = self.f / self.final_clip.fps
+            print("Saving as image")
+            self.final_clip.save_frame(flname, t=tim, withmask=False)
         else:  # the video
-            if self.logger == "gui":
-                self.logger = "proglog here"
-            clip.write_videofile(self.filename, codec=self.codec, audio=audio, preset=self.preset,
-                                 audio_codec=self.audio_codec, temp_audiofile=self.temp_audiofile,
-                                 write_logfile=self.write_logfile, threads=self.threads, logger=self.logger)
+            print("Saving as video")
+            self.final_clip.write_videofile(self.filename, codec=self.video_codec, audio=self.audio,
+                                            preset=self.compression, audio_codec=self.audio_codec,
+                                            temp_audiofile=self.temp_audiofile, write_logfile=self.log,
+                                            threads=self.threads, logger=self.logger)
+
+    def save_project(self, project_file):
+        with open(f'{project_file}', "wb") as project:
+            dill.dump(self, project)
+
+    def import_project(self, project_file):
+        with open(project_file, "rb") as project_file:
+            self.__dict__.update(dill.load(project_file).__dict__)
+
+    def load_config(self, config):
+        if type(config) == dict:
+            conf = config
+            self.__init__(config)
+        else:
+            with open(config, "r") as read_file:
+                conf = json.load(read_file)
+        self.__init__(conf)
+        return conf
 
     def all(self):
-        i = self.get_input()
-        m = self.get_mask(i)
-        c, a = self.apply(i, m)
-        self.save(c, a)
-
-    def resize(self, clip, decimal, scaler):
-        oldx, oldy = clip.size
-        newx = int(oldx * decimal)
-        newy = int(oldy * decimal)
-        print(f"Decreasing mask resolution in {(1 - decimal) * 100}%. {newx}x{newy} now")
-        return clip.fx(resize, decimal, method=scaler)
-
-    def refps(self, clip, decimal):
-        newfps = clip.fps * decimal
-        print(f"Decreasing mask fps in {(1 - decimal) * 100}%. {newfps}fps now")
-        return clip.set_fps(newfps)
+        self.oinput()
+        self.omask()
+        self.obackground()
+        self.save_file()
 
     def composite(self, back, front):
-        return CompositeVideoClip([back, front], size=front.size)
+        wf, hf = front.size
+        wb, hb = back.size
+        rf = wf / hf
+        rb = wb / hb
+        if rf > rb:
+            back = back.resize(width=wf)
+        else:
+            back = back.resize(height=hf)
+        return CompositeVideoClip([back, front.set_position("center")], size=front.size)
 
 
 class Timer:
@@ -207,11 +256,11 @@ class Timer:
 
 
 if __name__ == '__main__':
+
     t = Timer()
 
-    with open("config.json", "r") as read_file:
-        config = json.load(read_file)
-    p = Process(config)
+    p = Process()
+    p.load_config("config.json")
     p.all()
 
     t.finish()
