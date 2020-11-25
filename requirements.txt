@@ -2,6 +2,7 @@ certifi==2020.11.8
 chardet==3.0.4
 dataclasses==0.6
 decorator==4.4.2
+dill==0.3.3
 future==0.18.2
 idna==2.10
 imageio==2.9.0
