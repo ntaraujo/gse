@@ -135,7 +135,7 @@ class Process:
                 self.mask_clip = ImageClip(self.mask, duration=self.input_clip.duration)
             else:  # video
                 print(f"Loading the video {self.mask} as the mask for {self.input}")
-                self.mask_clip = VideoFileClip(self.mask, resize_algorithm=self.scaler).fx(loop, duration=self.input_clip.duration)
+                self.mask_clip = VideoFileClip(self.mask, resize_algorithm=self.scaler).fx(loop, duration=self.input_clip.duration).set_duration(self.input_clip.duration)
         else:  # if result of A.I.
             processclip = self.input_clip.copy()
             if self.fps != 1:  # if asked to change fps
@@ -167,7 +167,7 @@ class Process:
                 self.final_clip = self.composite(bg, maskedclip)
             else:  # if video
                 print(f"Using {self.background} as video source to the background of {self.input}")
-                bg = VideoFileClip(self.background, resize_algorithm=self.scaler).fx(loop, duration=maskedclip.duration)
+                bg = VideoFileClip(self.background, resize_algorithm=self.scaler).fx(loop, duration=maskedclip.duration).set_duration(self.input_clip.duration)
                 self.final_clip = self.composite(bg, maskedclip)
             self.audio = True
 
