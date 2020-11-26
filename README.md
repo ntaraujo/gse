@@ -1,6 +1,8 @@
 # Green Screen Emulator
 This project is under development and is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgremove)
 
+![example](https://user-images.githubusercontent.com/66187211/100396165-d544a880-3022-11eb-8996-dfcf3faea716.gif)
+
 ## Currently features
 * Work with video/image or a single video frame with person(s)
 * Output a mask you can use in another editor or the video already with the background modified by an image/video/color
@@ -49,7 +51,6 @@ python gse.py
 And... get a coffe
 
 ## Basics of configuration file
-
 * __input__: The path to your existent video/image. The format has to be supported by MoviePy. E.g. `"old_one.mp4"`
 * __output_dir__: Directory to output videos, images, temporary files and/or logs. Need a "/" or "\\" in the end. E.g `"/home/user/Videos/"`. If `""`, defaults to current directory
 * __output_name__: Part of the file name outputed. This will be {output_name}.{extension} if `get_frame` is `0`. E.g. `"new_one"`
@@ -133,3 +134,15 @@ p.save_project("my_project.gse")
 # Replace all the current Process with a saved one
 p.import_project("my_project.gse")
 ```
+
+## Some examples
+
+### Masks computed with 384x216 resolution
+| Example 1 | Example 2 |
+| --------- | --------- |
+| ![example1](https://user-images.githubusercontent.com/66187211/100396393-86e3d980-3023-11eb-90b8-06ca36d6287f.gif) | ![example2](https://user-images.githubusercontent.com/66187211/100396465-d75b3700-3023-11eb-8a34-36223b97d3ef.gif) |
+
+### Background substitution (2160x4096)
+| Original | Color | Image |
+| -------- | ----- | ----- |
+| ![original](https://user-images.githubusercontent.com/66187211/100396444-c4486700-3023-11eb-811a-141586f6357a.jpg) | ![color](https://user-images.githubusercontent.com/66187211/100396447-c5799400-3023-11eb-8fd7-b416821680e8.jpg) | ![image](https://user-images.githubusercontent.com/66187211/100396449-c6122a80-3023-11eb-8ad7-f1fcff976d01.jpg) |
