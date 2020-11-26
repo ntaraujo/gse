@@ -24,7 +24,7 @@
   "_comment7": "(integer, float) in percent. Final resolution is not effected but the one A.I. will analyse yes",
 
   "relative_mask_fps": 50,
-  "_comment8": "(integer, float) in percent. Final fps is not effected but the amount of video frames A.I. will analyse yes",
+  "_comment8": "(integer, float) in percent. Final fps is not effected but the amount of video frames which A.I. will analyse yes",
 
   "threads": 4,
   "_comment9": "(integer) can speed up the writing of the video on multicore computers but may have performance limited by CUDA",
@@ -48,5 +48,5 @@
   "_comment15": "(integer) if not 0 will save the file {output_dir}{output_name}.jpg with the given edited video frame and exit",
 
   "mask": "",
-  "_comment16": "(string) the path to a video you want to use as the mask instead of I.A. generated one. Leave empty to disable"
+  "_comment16": "(string) the path to a video/image you want to use as the mask instead of I.A. generated one. Leave empty to disable"
 }
