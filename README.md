@@ -1,2 +1,135 @@
-# gse
- Green Screen Emulator
+# Green Screen Emulator
+This project is under development and is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgremove)
+
+## Currently features
+* Work with video/image or a single video frame with person(s)
+* Output a mask you can use in another editor or the video already with the background modified by an image/video/color
+* Apply a mask of your choice instead the A.I. generated one (e.g. a previous exported mask with this app)
+
+## Under development features
+* Graphical interface
+* Work with more than just people images, but also objects and animals
+* Windows executable
+* Module usability
+* Save projects to decrease computational time on multiple requests
+
+## Quickstart
+Clone this repo:
+```
+git clone https://github.com/ntaraujo/gse.git
+cd gse
+```
+
+If you haven't yet, install python in your machine. Preferencially [this release](https://www.python.org/downloads/release/python-386/)
+
+Follow [these](https://pytorch.org/get-started/locally/) instructions to install PyTorch locally (you can omit torchaudio if want)
+
+E.g. the command to install the current PyTorch version for Windows and Linux with the Pip package manager and no CUDA features (not so cool):
+```
+pip install torch==1.7.0+cpu torchvision==0.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+```
+Then install MoviePy and Dill
+```
+pip install moviepy dill
+```
+
+Since PyTorch can't be installed with pip the same way in all platforms the `requirements.txt` stands here for reference on which packages versions this program was tested.
+
+Now, rename `config.json.example` to `config.json` and edit the values to which attend your needs.
+E.g. on Linux:
+```
+mv config.json.example config.json
+xdg-open config.json
+```
+
+Everything ready, you can run:
+```
+python gse.py
+```
+And... get a coffe
+
+## Basics of configuration file
+
+* __input__: The path to your existent video/image. The format has to be supported by MoviePy. E.g. `"old_one.mp4"`
+* __output_dir__: Directory to output videos, images, temporary files and/or logs. Need a "/" or "\\" in the end. E.g `"/home/user/Videos/"`. If `""`, defaults to current directory
+* __output_name__: Part of the file name outputed. This will be {output_name}.{extension} if `get_frame` is `0`. E.g. `"new_one"`
+* __extension__: Video/image formats supported by MoviePy. If video, must correspond to `video_codec` and `input` also has to be a video. If image, `input` has also to be an image. E.g `"mp4"` and `"jpg"`
+* __background__: Path to an image or a RGB color and also video if `input` is a video. If `""` the output is a black and white mask you can use in another editor. RGB colors are typed inside brackets and with commas between parameters: `[R, G, B]`. E.g. `[0, 255, 0]` (total green screen) and `"path/to/my/image.jpg"`
+* __relative_mask_resolution__: Depending on how big is your `input` you may want to decrease the time spend analysing it. This will not decrease the final output resolution but the quality and precision of the mask. E.g. `80` (%, percent)
+* __relative_mask_fps__: For same reasons you may want to decrease how much frames of your video `input` will be computed. This will not decrease the final fps of the person in scene or even the background fps. What is affected is HOW FAST the mask can accompany the person movement. Commonly, if you have a 60fps video you can use a 30fps mask without noticeable changes on the video quality. E.g. `50` (%, percent)
+* __get_frame__: If you want a preview of the processing results (mainly `relative_mask_resolution` config) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
+
+## Usage with Python Notebook or Console
+Even if in development, you can use these features by importing the `Process` module. Can be useful if you want to save computational time since when gse.py run, it loads a lot of stuff which will only be used with a single configuration file, a single output.
+```
+from gse import Process
+
+p = Process()  # loads a default configuration file
+
+p.load_config("config.json")  # replace with your configuration file
+
+# Replace the configuration file allowing to modify single variables in console
+config = p.load_config("config.json")
+config["relative_mask_fps"] = 60
+p.load_config(config)
+
+# Loads the input file and let it available as p.input_clip
+p.oinput()
+# If its a video, p.input_clip will be a VideoFileClip object and ImageClip if an image
+
+# Changes the duration of the file to 6 seconds (for video inputs).
+# See what is possible to do in https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html
+p.input_clip = p.input_clip.set_duration(6)
+
+# Loads the mask and let it available as p.mask_clip (p.input_clip has to exist)
+p.omask()
+# See type(p.mask_clip) to verify the object class
+
+# Add a 2 seconds fade in effect to the mask
+# (in the final video the person will appear magically)(for video masks).
+# See other effects in https://zulko.github.io/moviepy/ref/videofx.html
+from moviepy.video.fx.fadein import fadein
+p.mask_clip = p.mask_clip.fx(fadein, 2)
+
+# Make the final clip based on the background choice and let it available as p.final_clip.
+# It also will set p.audio variable which will say to the next method if the output video
+# would has audio or not (p.mask_clip and p.input_clip has to exist)
+p.obackground()
+# See type(p.final_clip) to verify the object class
+
+# Verify final clip duration
+p.final_clip.duration
+# Oh, if its a image, you can get "1" as result but never mind
+
+# Export to file (p.final_clip and p.audio has to exist)
+p.save_file()
+
+# Use another mask with another resolution, but with the same input
+config["mask"] = "video_with_beautiful_shapes.mp4"
+config["relative_mask_resolution"] = 61
+p.load_config(config)
+p.omask()
+p.obackground()
+p.save_file()
+
+# Use another background with the same mask and input
+config["background"] = [0, 0, 255]
+p.load_config(config)
+p.obackground()
+p.save_file()
+
+# Just export a preview of the video, with the same mask, input and background
+config["get_frame"] = 578
+p.load_config(config)
+p.save_file()
+
+# Note that to video, the longest time is spend in p.save_file(), so there is no much to do for saving this time
+
+# Experimental, I don't know if will work:
+
+# Save all the Process to use after
+p.save_project("my_project.gse")
+
+# Replace all the current Process with a saved one
+p.import_project("my_project.gse")
+```
