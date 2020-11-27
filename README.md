@@ -124,6 +124,9 @@ config["get_frame"] = 578
 p.load_config(config)
 p.save_file()
 
+# In IPython Notebook you can also preview with the following, where t is measured in seconds
+p.final_clip.ipython_display(t=15)
+
 # Note that for video, the longest time is spent in p.save_file(), so there is no much to do for saving this time
 
 # Experimental, I don't know if will work:
