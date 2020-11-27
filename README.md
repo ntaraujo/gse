@@ -3,9 +3,9 @@ This project is under development and is based on [Deep BGRemove](https://github
 
 ![example](https://user-images.githubusercontent.com/66187211/100396165-d544a880-3022-11eb-8996-dfcf3faea716.gif)
 
-## Currently features
-* Work with video/image or a single video frame with person(s)
-* Output a mask you can use in another editor or the video already with the background modified by an image/video/color
+## Current features
+* Work with video/image or a single video frame with people
+* Output a mask you can use in another editor or the video/image with the background already modified by a video/image/color
 * Apply a mask of your choice instead the A.I. generated one (e.g. a previous exported mask with this app)
 
 ## Under development features
@@ -13,7 +13,7 @@ This project is under development and is based on [Deep BGRemove](https://github
 * Work with more than just people images, but also objects and animals
 * Windows executable
 * Module usability
-* Save projects to decrease computational time on multiple requests
+* Save projects to decrease processing time on multiple requests
 
 ## Quickstart
 Clone this repo:
@@ -22,9 +22,9 @@ git clone https://github.com/ntaraujo/gse.git
 cd gse
 ```
 
-If you haven't yet, install python in your machine. Preferencially [this release](https://www.python.org/downloads/release/python-386/)
+If you haven't, install python in your machine. Preferably [this release](https://www.python.org/downloads/release/python-386/)
 
-Follow [these](https://pytorch.org/get-started/locally/) instructions to install PyTorch locally (you can omit torchaudio if want)
+Follow [these](https://pytorch.org/get-started/locally/) instructions to install PyTorch locally (you can omit torchaudio if you wish)
 
 E.g. the command to install the current PyTorch version for Windows and Linux with the Pip package manager and no CUDA features (not so cool):
 ```
@@ -35,7 +35,7 @@ Then install MoviePy and Dill
 pip install moviepy dill
 ```
 
-Since PyTorch can't be installed with pip the same way in all platforms the `requirements.txt` stands here for reference on which packages versions this program was tested.
+Since PyTorch cannot be installed with pip in the same way on all platforms, `requirements.txt` serves as a reference for the package versions that have been tested.
 
 Now, rename `config.json.example` to `config.json` and edit the values to which attend your needs.
 E.g. on Linux:
@@ -44,49 +44,49 @@ mv config.json.example config.json
 xdg-open config.json
 ```
 
-Everything ready, you can run:
+All done, you can run:
 ```
 python gse.py
 ```
 And... get a coffe
 
 ## Basics of configuration file
-* __input__: The path to your existent video/image. The format has to be supported by MoviePy. E.g. `"old_one.mp4"`
-* __output_dir__: Directory to output videos, images, temporary files and/or logs. Need a "/" or "\\" in the end. E.g `"/home/user/Videos/"`. If `""`, defaults to current directory
-* __output_name__: Part of the file name outputed. This will be {output_name}.{extension} if `get_frame` is `0`. E.g. `"new_one"`
-* __extension__: Video/image formats supported by MoviePy. If video, must correspond to `video_codec` and `input` also has to be a video. If image, `input` has also to be an image. E.g `"mp4"` and `"jpg"`
-* __background__: Path to an image or a RGB color and also video if `input` is a video. If `""` the output is a black and white mask you can use in another editor. RGB colors are typed inside brackets and with commas between parameters: `[R, G, B]`. E.g. `[0, 255, 0]` (total green screen) and `"path/to/my/image.jpg"`
-* __relative_mask_resolution__: Depending on how big is your `input` you may want to decrease the time spend analysing it. This will not decrease the final output resolution but the quality and precision of the mask. E.g. `80` (%, percent)
-* __relative_mask_fps__: For same reasons you may want to decrease how much frames of your video `input` will be computed. This will not decrease the final fps of the person in scene or even the background fps. What is affected is HOW FAST the mask can accompany the person movement. Commonly, if you have a 60fps video you can use a 30fps mask without noticeable changes on the video quality. E.g. `50` (%, percent)
-* __get_frame__: If you want a preview of the processing results (mainly `relative_mask_resolution` config) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
+* __input__: The path to your existent video/image. The format must be supported by MoviePy. E.g. `"old_one.mp4"`
+* __output_dir__: Directory for outputting videos, images, temporary files and/or logs. Need a "/" or "\\" in the end. E.g `"/home/user/Videos/"`. If `""`, defaults to current directory
+* __output_name__: Part of the generated file name. This will be {output_name}.{extension} if `get_frame` is `0`. E.g. `"new_one"`
+* __extension__: Video/image formats supported by MoviePy. If video, must correspond to `video_codec` and `input` must also to be a video. If image, `input` must to be an image. E.g `"mp4"` and `"jpg"`
+* __background__: Path to an image or RGB color or also video if `input` is a video. If `""` the output is a black and white mask you can use in another editor. RGB colors are typed in square brackets and with commas between parameters: `[R, G, B]`. E.g. `[0, 255, 0]` (green screen) and `"path/to/my/image.jpg"`
+* __relative_mask_resolution__: Depending on how big your `input` is, you may want to decrease the time spend analyzing it. This will not decrease the final output resolution but the quality and accuracy of the mask. E.g. `80` (%, percent)
+* __relative_mask_fps__: For the same reasons you may want to decrease the amount of frames in your video `input` that will be computed. This will not decrease the final fps of the person in scene or even the background fps. What is affected is how fluid is the movement of the mask that accompanies the person movement. Typically, if you have a 60fps video you can use a 30fps mask without noticeable changes on the video quality. E.g. `50` (%, percent)
+* __get_frame__: If you want a preview of the processing results (mainly the `relative_mask_resolution` setting) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
 
 ## Usage with Python Notebook or Console
-Even if in development, you can use these features by importing the `Process` module. Can be useful if you want to save computational time since when gse.py run, it loads a lot of stuff which will only be used with a single configuration file, a single output.
+Even under development, you can use these features by importing the `Process` module. Can be useful if you want to save time, since when gse.py is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
 ```
 from gse import Process
 
-p = Process()  # loads a default configuration file
+p = Process()  # load a default configuration file
 
 p.load_config("config.json")  # replace with your configuration file
 
-# Replace the configuration file allowing to modify single variables in console
+# Replace the configuration file allowing to modify variables on console
 config = p.load_config("config.json")
 config["relative_mask_fps"] = 60
 p.load_config(config)
 
-# Loads the input file and let it available as p.input_clip
+# Load the input file and let it available as p.input_clip
 p.oinput()
-# If its a video, p.input_clip will be a VideoFileClip object and ImageClip if an image
+# If its a video, p.input_clip will be a VideoFileClip object or ImageClip if a image
 
-# Changes the duration of the file to 6 seconds (for video inputs).
-# See what is possible to do in https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html
+# Change the duration to 6 seconds (for video inputs).
+# See what is possible at https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html
 p.input_clip = p.input_clip.set_duration(6)
 
-# Loads the mask and let it available as p.mask_clip (p.input_clip has to exist)
+# Load the mask and let it available as p.mask_clip (p.input_clip must to exist)
 p.omask()
-# See type(p.mask_clip) to verify the object class
+# See type(p.mask_clip) to check the object's class
 
-# Add a 2 seconds fade in effect to the mask
+# Add a 2-second fade in effect to the mask
 # (in the final video the person will appear magically)(for video masks).
 # See other effects in https://zulko.github.io/moviepy/ref/videofx.html
 from moviepy.video.fx.fadein import fadein
@@ -94,15 +94,15 @@ p.mask_clip = p.mask_clip.fx(fadein, 2)
 
 # Make the final clip based on the background choice and let it available as p.final_clip.
 # It also will set p.audio variable which will say to the next method if the output video
-# would has audio or not (p.mask_clip and p.input_clip has to exist)
+# would has audio or not (p.mask_clip and p.input_clip must to exist)
 p.obackground()
-# See type(p.final_clip) to verify the object class
+# See type(p.final_clip) to check the object's class
 
-# Verify final clip duration
+# Check the final clip duration
 p.final_clip.duration
-# Oh, if its a image, you can get "1" as result but never mind
+# Oh, if it's an image, you can get "1" as result but never mind
 
-# Export to file (p.final_clip and p.audio has to exist)
+# Export to file (p.final_clip and p.audio must to exist)
 p.save_file()
 
 # Use another mask with another resolution, but with the same input
@@ -124,14 +124,14 @@ config["get_frame"] = 578
 p.load_config(config)
 p.save_file()
 
-# Note that to video, the longest time is spend in p.save_file(), so there is no much to do for saving this time
+# Note that for video, the longest time is spent in p.save_file(), so there is no much to do for saving this time
 
 # Experimental, I don't know if will work:
 
-# Save all the Process to use after
+# Save the entire Process to use after
 p.save_project("my_project.gse")
 
-# Replace all the current Process with a saved one
+# Replace the entire current process with a saved one
 p.import_project("my_project.gse")
 ```
 
