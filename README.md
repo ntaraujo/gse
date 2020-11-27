@@ -60,7 +60,7 @@ And... get a coffe
 * __relative_mask_fps__: For the same reasons you may want to decrease the amount of frames in your video `input` that will be computed. This will not decrease the final fps of the person in scene or even the background fps. What is affected is how fluid is the movement of the mask that accompanies the person movement. Typically, if you have a 60fps video you can use a 30fps mask without noticeable changes on the video quality. E.g. `50` (%, percent)
 * __get_frame__: If you want a preview of the processing results (mainly the `relative_mask_resolution` setting) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
 
-## Usage with Python Notebook or Console
+## Usage with IPython Notebook or Python Console
 Even under development, you can use these features by importing the `Process` module. Can be useful if you want to save time, since when gse.py is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
 ```
 from gse import Process
