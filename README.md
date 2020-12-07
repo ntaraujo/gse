@@ -65,18 +65,16 @@ Even under development, you can use these features by importing the `Process` mo
 ```
 from gse import Process
 
-p = Process()  # load a default configuration file
+p = Process()  # load with a default configuration file
 
-p.load_config("config.json")  # replace with your configuration file
+p = Process("config.json")  # load with a configuration file
 
-# Replace the configuration file allowing to modify variables on console
-config = p.load_config("config.json")
-config["relative_mask_fps"] = 60
-p.load_config(config)
+p.load_config("config.json")  # replace the configuration file
+
+p.relative_mask_fps = 60  # Modify a single variable
 
 # Load the input file and let it available as p.input_clip
 p.oinput()
-# If its a video, p.input_clip will be a VideoFileClip object or ImageClip if a image
 
 # Change the duration to 6 seconds (for video inputs).
 # See what is possible at https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html
@@ -87,41 +85,36 @@ p.omask()
 # See type(p.mask_clip) to check the object's class
 
 # Add a 2-second fade in effect to the mask
-# (in the final video the person will appear magically)(for video masks).
 # See other effects in https://zulko.github.io/moviepy/ref/videofx.html
 from moviepy.video.fx.fadein import fadein
 p.mask_clip = p.mask_clip.fx(fadein, 2)
 
 # Make the final clip based on the background choice and let it available as p.final_clip.
-# It also will set p.audio variable which will say to the next method if the output video
+# Also set p.audio which will say to the next method if the output video
 # would has audio or not (p.mask_clip and p.input_clip must to exist)
 p.obackground()
 # See type(p.final_clip) to check the object's class
 
 # Check the final clip duration
 p.final_clip.duration
-# Oh, if it's an image, you can get "1" as result but never mind
 
 # Export to file (p.final_clip and p.audio must to exist)
 p.save_file()
 
 # Use another mask with another resolution, but with the same input
-config["mask"] = "video_with_beautiful_shapes.mp4"
-config["relative_mask_resolution"] = 61
-p.load_config(config)
+p.mask = "video_with_beautiful_shapes.mp4"
+p.relative_mask_resolution = 61
 p.omask()
 p.obackground()
 p.save_file()
 
 # Use another background with the same mask and input
-config["background"] = [0, 0, 255]
-p.load_config(config)
+p.background = [0, 0, 255]
 p.obackground()
 p.save_file()
 
 # Just export a preview of the video, with the same mask, input and background
-config["get_frame"] = 578
-p.load_config(config)
+p.get_frame = 578
 p.save_file()
 
 # In IPython Notebook you can also preview with the following, where t is measured in seconds

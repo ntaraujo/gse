@@ -87,38 +87,7 @@ class Process:
         else:
             config = conf
 
-        self.input = config["input"]
-        self.scaler = config["scaler"]
-        self.mask = config["mask"]
-        self.relative_mask_resolution = config["relative_mask_resolution"]
-        self.relative_mask_fps = config["relative_mask_fps"]
-        self.cuda = config["cuda"]
-        self.background = config["background"]
-        self.output_dir = config["output_dir"]
-        self.output_name = config["output_name"]
-        self.extension = config["extension"]
-        self.monitor = config["monitor"]
-        self.audio_codec = config["audio_codec"]
-        self.log = config["log"]
-        self.threads = config["threads"]
-        self.video_codec = config["video_codec"]
-        self.compression = config["compression"]
-        self.get_frame = config["get_frame"]
-
-        self.res = self.relative_mask_resolution * 0.01
-        self.fps = self.relative_mask_fps * 0.01
-        self.filename = f'{self.output_dir}{self.output_name}.{self.extension}'
-        self.temp_audiofile = f'{self.output_dir}TEMP_{self.output_name}.mp3'
-        if self.monitor == "gui":
-            self.logger = "bar"  # yet
-        else:
-            self.logger = self.monitor
-        if self.input != "old_one.mp4" and not imghdr.what(self.input):
-            self.imgext = "jpg"
-            self.f = self.get_frame
-        else:
-            self.imgext = self.extension
-            self.f = 1
+        self.load_config(config)
 
     def oinput(self):
         if not imghdr.what(self.input):  # if video
@@ -138,15 +107,16 @@ class Process:
                 self.mask_clip = VideoFileClip(self.mask, resize_algorithm=self.scaler).fx(loop, duration=self.input_clip.duration).set_duration(self.input_clip.duration)
         else:  # if result of A.I.
             processclip = self.input_clip.copy()
-            if self.fps != 1:  # if asked to change fps
-                newfps = self.input_clip.fps * self.fps
+            fps = self.relative_mask_fps * 0.01
+            if fps != 1:  # if asked to change fps
+                newfps = self.input_clip.fps * fps
                 processclip = processclip.set_fps(newfps)
-                print(f"Mask fps decreased in {(1 - self.fps) * 100}%. {processclip.fps}fps now")
-            if self.res != 1:  # if asked to resize
-                processclip = processclip.resize(self.res)
-                w = processclip.size[0]
-                h = processclip.size[1]
-                print(f"Mask resolution decreased in {(1 - self.res) * 100}%, {w}x{h} now")
+                print(f"Mask fps decreased in {(1 - fps) * 100}%. {processclip.fps}fps now")
+            res = self.relative_mask_resolution * 0.01
+            if res != 1:  # if asked to resize
+                processclip = processclip.resize(res)
+                w, h = processclip.size
+                print(f"Mask resolution decreased in {(1 - res) * 100}%, {w}x{h} now")
             self.mask_clip = processclip.fl_image(MakeMask(self.cuda))
 
     def obackground(self):  # if background
@@ -172,17 +142,30 @@ class Process:
             self.audio = True
 
     def save_file(self):  # save
-        if self.f != 0:  # an image
-            flname = f'{self.output_dir}{self.output_name}.{self.imgext}'
-            tim = self.f / self.final_clip.fps
+        filename = f'{self.output_dir}{self.output_name}.{self.extension}'
+        temp_audiofile = f'{self.output_dir}TEMP_{self.output_name}.mp3'
+        if self.monitor == "gui":
+            logger = "bar"  # yet
+        else:
+            logger = self.monitor
+        if self.input != "old_one.mp4" and not imghdr.what(self.input):
+            imgext = "jpg"
+            f = self.get_frame
+        else:
+            imgext = self.extension
+            f = 1
+
+        if f != 0:  # an image
+            flname = f'{self.output_dir}{self.output_name}.{imgext}'
+            tim = f / self.final_clip.fps
             print("Saving as image")
             self.final_clip.save_frame(flname, t=tim, withmask=False)
         else:  # the video
             print("Saving as video")
-            self.final_clip.write_videofile(self.filename, codec=self.video_codec, audio=self.audio,
+            self.final_clip.write_videofile(filename, codec=self.video_codec, audio=self.audio,
                                             preset=self.compression, audio_codec=self.audio_codec,
-                                            temp_audiofile=self.temp_audiofile, write_logfile=self.log,
-                                            threads=self.threads, logger=self.logger)
+                                            temp_audiofile=temp_audiofile, write_logfile=self.log,
+                                            threads=self.threads, logger=logger)
 
     def save_project(self, project_file):
         with open(f'{project_file}', "wb") as project:
@@ -195,11 +178,11 @@ class Process:
     def load_config(self, config):
         if type(config) == dict:
             conf = config
-            self.__init__(config)
         else:
             with open(config, "r") as read_file:
                 conf = json.load(read_file)
-        self.__init__(conf)
+        for key in conf:
+            self.__dict__[key] = conf[key]
         return conf
 
     def all(self):
