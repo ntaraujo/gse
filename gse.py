@@ -242,8 +242,7 @@ if __name__ == '__main__':
 
     t = Timer()
 
-    p = Process()
-    p.load_config("config.json")
+    p = Process("config.json")
     p.all()
 
     t.finish()
