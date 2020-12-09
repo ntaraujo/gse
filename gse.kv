@@ -1,6 +1,28 @@
 <Manager>:
     Welcome:
+    Background:
+    Time:
+    Advanced:
 
 <Welcome>:
     name: "welcome"
-    BoxLayout:
+    md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "Welcome to Green Screen Emulator"
+            halign: "center"
+            font_size: "50sp"
+            bold: True
+        MDBoxLayout:
+            padding: "15sp"
+            spacing: "15sp"
+            size_hint_y: None
+            height: self.minimum_height + sp(50)
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Open the last project"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Create new"
+                    on_release: app.file_manager_open()
