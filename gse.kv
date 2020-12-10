@@ -1,8 +1,10 @@
 <Manager>:
     Welcome:
     Background:
+    Colors:
     Time:
     Advanced:
+    Ready:
 
 <Welcome>:
     name: "welcome"
@@ -24,5 +26,152 @@
                     text: "Open the last project"
             AnchorLayout:
                 MDFlatButton:
-                    text: "Create new"
+                    text: "Upload new source"
                     on_release: app.file_manager_open()
+
+<Background>
+    name: "background"
+    md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "This is the file you selected to remove the background:"
+            halign: "center"
+            font_size: "30sp"
+        MDLabel:
+            text: app.ctrl.input
+            halign: "center"
+            font_size: "30sp"
+            bold: True
+        MDLabel:
+            text: "Now, which should be the new background?"
+            halign: "center"
+            font_size: "30sp"
+        MDBoxLayout:
+            padding: "15sp"
+            spacing: "15sp"
+            size_hint_y: None
+            height: self.minimum_height + sp(50)
+            AnchorLayout:
+                MDFlatButton:
+                    text: "No one (export the mask)"
+                    on_release: app.ctrl.background = ""
+                    on_release: root.manager.current = "time"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Color"
+                    on_release: root.manager.current = "colors"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Image/Video"
+                    on_release: app.file_manager_open()
+
+<Colors>
+    name: "colors"
+    md_bg_color: cp.color[0], cp.color[1], cp.color[2], 1
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "Note alpha channel is not supported yet"
+            halign: "center"
+            font_size: "30sp"
+            adaptive_height: True
+        ColorPicker:
+            id: cp
+            color: 0, 1, 0, 1
+    AnchorLayout:
+        padding: "10sp"
+        anchor_x: "right"
+        anchor_y: "bottom"
+        MDFloatingActionButton:
+            icon: "check"
+            on_release: root.manager.current = "time"
+            on_release: app.ctrl.background = [c * 255 for c in [cp.color[0], cp.color[1], cp.color[2]]]
+
+<Time>
+    name: "time"
+    md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "This will be the new background:"
+            halign: "center"
+            font_size: "30sp"
+        MDLabel:
+            text: str(app.ctrl.background)
+            halign: "center"
+            font_size: "30sp"
+            bold: True
+        MDLabel:
+            text: "Now, how fast should be the processing?"
+            halign: "center"
+            font_size: "30sp"
+        MDBoxLayout:
+            padding: "15sp"
+            spacing: "15sp"
+            size_hint_y: None
+            height: self.minimum_height + sp(50)
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Default"
+                    on_release: root.manager.current = "ready"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Choose a deadline"
+                    on_release: app.show_date_picker()
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Go to advanced options"
+                    on_release: root.manager.current = "advanced"
+
+<Ready>
+    name: "ready"
+    md_bg_color: app.theme_cls.primary_color
+    MDLabel:
+        text: "Everything ready"
+        halign: "center"
+        font_size: "50sp"
+        bold: True
+    MDBoxLayout:
+        padding: "15sp"
+        spacing: "15sp"
+        MDBoxLayout:
+            orientation: "vertical"
+            adaptive_height: True
+            MDLabel:
+                text: "Folder:"
+                halign: "center"
+            AnchorLayout:
+                MDRaisedButton:
+                    md_bg_color: app.theme_cls.accent_color
+                    text_color: 0, 0, 0, 1
+                    text: app.ctrl.output_dir
+                    on_release: app.file_manager_open()
+        MDBoxLayout:
+            orientation: "vertical"
+            adaptive_height: True
+            MDLabel:
+                text: "File name and extension:"
+                halign: "center"
+            AnchorLayout:
+                MDTextField:
+                    hint_text: app.ctrl.output_name + "." + app.ctrl.extension
+                    on_text_validate: self.hint_text = self.text
+                    mode: "rectangle"
+                    color_mode: 'custom'
+                    line_color_focus: 0, 0, 0, 1
+                    line_color_normal: 0, 0, 0, 1
+        MDBoxLayout:
+            orientation: "vertical"
+            adaptive_height: True
+            MDLabel:
+                text: "Start!"
+                halign: "center"
+            AnchorLayout:
+                MDIconButton:
+                    md_bg_color: app.theme_cls.accent_color
+                    icon: "play"
+
+<Advanced>
+    name: "advanced"
+    md_bg_color: app.theme_cls.primary_color
