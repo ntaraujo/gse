@@ -167,3 +167,58 @@
 <Advanced>
     name: "advanced"
     md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        id: tudo
+        MDBoxLayout:
+            id: esquerda
+            orientation: "vertical"
+            MDBoxLayout:
+                id: outras_duas_coisas
+                MDBoxLayout:
+                    id: video_codec
+                    orientation: "vertical"
+                MDBoxLayout:
+                    id: audio_codec
+                    orientation: "vertical"
+            MDBoxLayout:
+                id: background_var
+            MDBoxLayout:
+                id: mask
+            MDBoxLayout:
+                id: muito_esquerda
+                MDBoxLayout:
+                    id: sliders
+                    MDBoxLayout:
+                        id: relative_mask_resolution
+                        orientation: "vertical"
+                    MDBoxLayout:
+                        id: relative_mask_fps
+                        orientation: "vertical"
+                MDBoxLayout:
+                    id: direita_dentro_da_esquerda
+                    orientation: "vertical"
+                    MDBoxLayout:
+                        id: cuda_threads
+                    MDBoxLayout:
+                        id: duas_coisas
+                        MDBoxLayout:
+                            id: compression
+                            orientation: "vertical"
+                        MDBoxLayout:
+                            id: scaler
+                            orientation: "vertical"
+                    MDBoxLayout:
+                        id: monitor_log
+                        MDBoxLayout:
+                            id: monitor
+                            orientation: "vertical"
+                        MDBoxLayout:
+                            id: log
+                            orientation: "vertical"
+        MDBoxLayout:
+            id: direita
+            orientation: "vertical"
+            MDBoxLayout:
+                id: preview_time
+            MDBoxLayout:
+                id: calc
