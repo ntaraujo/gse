@@ -148,7 +148,7 @@
             AnchorLayout:
                 MDTextField:
                     hint_text: app.ctrl.output_name + "." + app.ctrl.extension
-                    on_text_validate: self.hint_text = self.text
+                    on_text: app.ready_output(self)
                     mode: "rectangle"
                     color_mode: 'custom'
                     line_color_focus: 0, 0, 0, 1

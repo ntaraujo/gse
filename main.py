@@ -80,6 +80,14 @@ class GSE(MDApp):
             select_path=self.select_path,
         )
 
+    def ready_output(self, inst):
+        strs = inst.text.split(".")
+        if len(strs) == 2:
+            inst.hint_text = inst.text
+            self.ctrl.output_name = strs[0]
+            self.ctrl.extension = strs[1]
+        else:
+            pass  # error
     def file_manager_open(self):
         # parent = os.path.dirname(os.path.abspath(os.getcwd()))
         home = os.path.expanduser("~")
