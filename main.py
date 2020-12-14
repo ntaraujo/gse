@@ -18,6 +18,7 @@ class Welcome(MDScreen):
 class Background(MDScreen):
     pass
 
+
 class Colors(MDScreen):
     pass
 
@@ -28,6 +29,7 @@ class Time(MDScreen):
 
 class Advanced(MDScreen):
     pass
+
 
 class Ready(MDScreen):
     pass
@@ -93,6 +95,7 @@ class GSE(MDApp):
             self.ctrl.extension = strs[1]
         else:
             pass  # error
+
     def video_codec_menu_callback(self, instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
             self.ctrl.video_codec = None
@@ -100,6 +103,7 @@ class GSE(MDApp):
             self.ctrl.video_codec = instance_menu_item.text.split()[0]
         instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
+
     def audio_codec_menu_callback(self, instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
             self.ctrl.audio_codec = None
@@ -107,10 +111,11 @@ class GSE(MDApp):
             self.ctrl.audio_codec = instance_menu_item.text.split()[0]
         instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
+
     def file_manager_open(self):
         # parent = os.path.dirname(os.path.abspath(os.getcwd()))
         home = os.path.expanduser("~")
-        self.file_manager.show(home)  # output manager to the screen
+        self.file_manager.show(home)
         self.manager_open = True
 
     def select_path(self, path):
@@ -133,9 +138,6 @@ class GSE(MDApp):
         date_dialog.open()
 
     def get_date(self, date):
-        '''
-        :type date: <class 'datetime.date'>
-        '''
         self.show_time_picker()
 
     def show_time_picker(self):
@@ -146,12 +148,6 @@ class GSE(MDApp):
         time_dialog.open()
 
     def get_time(self, instance, time):
-        '''
-        The method returns the set time.
-
-        :type instance: <kivymd.uix.picker.MDTimePicker object>
-        :type time: <class 'datetime.time'>
-        '''
         if self.sm.current == "time":
             self.sm.current = "ready"
         return time
@@ -167,18 +163,21 @@ class GSE(MDApp):
         self.sm.add_widget(Colors())
         self.sm.add_widget(Time())
         self.sm.add_widget(Ready())
+
         self.video_codec_menu = MDDropdownMenu(
             caller=self.advanced.ids.video_codec_button,
             items=self.video_codec_menu_items,
             width_mult=4,
         )
         self.video_codec_menu.bind(on_release=self.video_codec_menu_callback)
+
         self.audio_codec_menu = MDDropdownMenu(
             caller=self.advanced.ids.audio_codec_button,
             items=self.audio_codec_menu_items,
             width_mult=4,
         )
         self.audio_codec_menu.bind(on_release=self.audio_codec_menu_callback)
+
         return self.sm
 
 

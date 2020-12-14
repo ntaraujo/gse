@@ -16,10 +16,12 @@
             AnchorLayout:
                 MDFlatButton:
                     text: "Open the last project"
+                    font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
                     text: "Upload new source"
                     on_release: app.file_manager_open()
+                    font_size: "20sp"
 
 <Background>
     name: "background"
@@ -43,28 +45,33 @@
             padding: "15sp"
             spacing: "15sp"
             size_hint_y: None
-            height: self.minimum_height + sp(50)
+            height: self.minimum_height + sp(60)
             AnchorLayout:
                 MDFlatButton:
                     text: "No one (export the mask)"
                     on_release: app.ctrl.background = ""
                     on_release: root.manager.current = "time"
+                    font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
                     text: "Color"
                     on_release: root.manager.current = "colors"
+                    font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
                     text: "Image/Video"
                     on_release: app.file_manager_open()
+                    font_size: "20sp"
 
 <Colors>
     name: "colors"
     md_bg_color: cp.color[0], cp.color[1], cp.color[2], 1
     MDBoxLayout:
         orientation: "vertical"
+        padding: "15sp"
+        spacing: "15sp"
         MDLabel:
-            text: "Note alpha channel is not supported yet"
+            text: "Note alpha channel is not supported"
             halign: "center"
             font_size: "30sp"
             adaptive_height: True
@@ -102,19 +109,22 @@
             padding: "15sp"
             spacing: "15sp"
             size_hint_y: None
-            height: self.minimum_height + sp(50)
+            height: self.minimum_height + sp(60)
             AnchorLayout:
                 MDFlatButton:
                     text: "Default"
                     on_release: root.manager.current = "ready"
+                    font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
                     text: "Choose a deadline"
                     on_release: app.show_date_picker()
+                    font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
                     text: "Go to advanced options"
                     on_release: root.manager.current = "advanced"
+                    font_size: "20sp"
 
 <Ready>
     name: "ready"
@@ -125,7 +135,7 @@
         font_size: "50sp"
         bold: True
     MDBoxLayout:
-        padding: "15sp"
+        padding: "20sp"
         spacing: "15sp"
         MDBoxLayout:
             orientation: "vertical"
@@ -137,8 +147,9 @@
                 MDRaisedButton:
                     md_bg_color: app.theme_cls.accent_color
                     text_color: 0, 0, 0, 1
-                    text: app.ctrl.output_dir
+                    text: app.ctrl.output_dir if app.ctrl.output_dir != "" else "select one"
                     on_release: app.file_manager_open()
+                    font_size: "20sp"
         MDBoxLayout:
             orientation: "vertical"
             adaptive_height: True
@@ -153,6 +164,7 @@
                     color_mode: 'custom'
                     line_color_focus: 0, 0, 0, 1
                     line_color_normal: 0, 0, 0, 1
+                    font_size: "20sp"
         MDBoxLayout:
             orientation: "vertical"
             adaptive_height: True
