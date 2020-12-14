@@ -7,6 +7,7 @@ from kivy.properties import StringProperty, ObjectProperty, NumericProperty, Boo
 from kivy.event import EventDispatcher
 from kivymd.uix.picker import MDTimePicker, MDDatePicker
 from datetime import datetime
+from kivymd.uix.menu import MDDropdownMenu
 from gse import Process
 
 
@@ -71,6 +72,8 @@ def on_{key}(self, instance, value):
 class GSE(MDApp):
     sm = video_codec_menu = audio_codec_menu = advanced = None
     ctrl = Control()
+    video_codec_menu_items = [{"text": f"{i}"} for i in ["default", "libx264 (.mp4)", "mpeg4 (.mp4)", "rawvideo (.avi)",
+                                                         "png (.avi)", "libvorbis (.ogv)", "libvpx (.webm)"]]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -88,6 +91,13 @@ class GSE(MDApp):
             self.ctrl.extension = strs[1]
         else:
             pass  # error
+    def video_codec_menu_callback(self, instance_menu, instance_menu_item):
+        if "default" in instance_menu_item.text:
+            self.ctrl.video_codec = None
+        else:
+            self.ctrl.video_codec = instance_menu_item.text.split()[0]
+        instance_menu.caller.text = instance_menu_item.text
+        instance_menu.dismiss()
     def file_manager_open(self):
         # parent = os.path.dirname(os.path.abspath(os.getcwd()))
         home = os.path.expanduser("~")
@@ -148,6 +158,12 @@ class GSE(MDApp):
         self.sm.add_widget(Colors())
         self.sm.add_widget(Time())
         self.sm.add_widget(Ready())
+        self.video_codec_menu = MDDropdownMenu(
+            caller=self.advanced.ids.video_codec_button,
+            items=self.video_codec_menu_items,
+            width_mult=4,
+        )
+        self.video_codec_menu.bind(on_release=self.video_codec_menu_callback)
         return self.sm
 
 

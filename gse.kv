@@ -177,6 +177,16 @@
                 MDBoxLayout:
                     id: video_codec
                     orientation: "vertical"
+                    MDLabel:
+                        text: "video_codec"
+                        halign: "center"
+                    AnchorLayout:
+                        MDRaisedButton:
+                            id: video_codec_button
+                            md_bg_color: app.theme_cls.accent_color
+                            text_color: 0, 0, 0, 1
+                            text: app.ctrl.video_codec if app.ctrl.video_codec else "default"
+                            on_release: app.video_codec_menu.open()
                 MDBoxLayout:
                     id: audio_codec
                     orientation: "vertical"
