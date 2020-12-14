@@ -6,6 +6,7 @@ import os
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty, BooleanProperty
 from kivy.event import EventDispatcher
 from kivymd.uix.picker import MDTimePicker, MDDatePicker
+from datetime import datetime
 from gse import Process
 
 
@@ -113,6 +114,8 @@ class GSE(MDApp):
     def show_time_picker(self):
         time_dialog = MDTimePicker()
         time_dialog.bind(time=self.get_time)
+        previous_time = datetime.now()
+        time_dialog.set_time(previous_time)
         time_dialog.open()
 
     def get_time(self, instance, time):
