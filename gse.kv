@@ -190,6 +190,16 @@
                 MDBoxLayout:
                     id: audio_codec
                     orientation: "vertical"
+                    MDLabel:
+                        text: "audio_codec"
+                        halign: "center"
+                    AnchorLayout:
+                        MDRaisedButton:
+                            id: audio_codec_button
+                            md_bg_color: app.theme_cls.accent_color
+                            text_color: 0, 0, 0, 1
+                            text: app.ctrl.audio_codec if app.ctrl.audio_codec else "default"
+                            on_release: app.audio_codec_menu.open()
             MDBoxLayout:
                 id: background_var
             MDBoxLayout:
