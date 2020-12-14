@@ -9,10 +9,6 @@ from kivymd.uix.picker import MDTimePicker, MDDatePicker
 from gse import Process
 
 
-class Manager(ScreenManager):
-    pass
-
-
 class Welcome(MDScreen):
     pass
 
@@ -72,6 +68,7 @@ def on_{key}(self, instance, value):
 
 
 class GSE(MDApp):
+    sm = video_codec_menu = audio_codec_menu = advanced = None
     ctrl = Control()
 
     def __init__(self, **kwargs):
@@ -132,7 +129,14 @@ class GSE(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "LightGreen"
         # self.theme_cls.theme_style = "Dark"
-        self.sm = Manager()
+        self.sm = ScreenManager()
+        self.advanced = Advanced()
+        self.sm.add_widget(self.advanced)
+        self.sm.add_widget(Welcome())
+        self.sm.add_widget(Background())
+        self.sm.add_widget(Colors())
+        self.sm.add_widget(Time())
+        self.sm.add_widget(Ready())
         return self.sm
 
 
