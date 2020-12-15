@@ -30,7 +30,7 @@
     MDBoxLayout:
         orientation: "vertical"
         MDLabel:
-            text: "This is the file you selected to remove the background:"
+            text: "Which should be the new background to the file?"
             halign: "center"
             font_size: "30sp"
         MDLabel:
@@ -38,10 +38,6 @@
             halign: "center"
             font_size: "30sp"
             bold: True
-        MDLabel:
-            text: "Now, which should be the new background?"
-            halign: "center"
-            font_size: "30sp"
         MDBoxLayout:
             padding: "15sp"
             spacing: "15sp"
@@ -94,18 +90,14 @@
     MDBoxLayout:
         orientation: "vertical"
         MDLabel:
-            text: "This will be the new background:"
+            text: "How fast should be the processing to the new background:"
             halign: "center"
             font_size: "30sp"
         MDLabel:
-            text: str(app.ctrl.background)
+            text: str(app.ctrl.background) if app.ctrl.background != "" else "no one"
             halign: "center"
             font_size: "30sp"
             bold: True
-        MDLabel:
-            text: "Now, how fast should be the processing?"
-            halign: "center"
-            font_size: "30sp"
         MDBoxLayout:
             padding: "15sp"
             spacing: "15sp"
