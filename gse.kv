@@ -253,33 +253,8 @@
                             text_color: 0, 0, 0, 1
                             text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
                             on_release: app.mask_menu.open()
-            MDBoxLayout:
-                id: muito_esquerda
-                MDBoxLayout:
-                    id: sliders
-                    MDBoxLayout:
-                        id: relative_mask_resolution
-                        orientation: "vertical"
-                    MDBoxLayout:
-                        id: relative_mask_fps
-                        orientation: "vertical"
-                MDBoxLayout:
-                    id: direita_dentro_da_esquerda
-                    orientation: "vertical"
-                    MDBoxLayout:
-                        id: cuda_threads
-                    MDBoxLayout:
-                        id: monitor_log
-                        MDBoxLayout:
-                            id: monitor
-                            orientation: "vertical"
-                        MDBoxLayout:
-                            id: log
-                            orientation: "vertical"
         MDBoxLayout:
             id: direita
             orientation: "vertical"
             MDBoxLayout:
                 id: preview_time
-            MDBoxLayout:
-                id: calc
