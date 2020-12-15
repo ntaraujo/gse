@@ -239,6 +239,18 @@
                             text_color: 0, 0, 0, 1
                             text: app.ctrl.scaler
                             on_release: app.scaler_menu.open()
+                MDBoxLayout:
+                    orientation: "vertical"
+                    MDLabel:
+                        text: "background"
+                        halign: "center"
+                    AnchorLayout:
+                        MDRaisedButton:
+                            md_bg_color: app.theme_cls.accent_color
+                            text_color: 0, 0, 0, 1
+                            text: str(app.ctrl.background) if app.ctrl.background != "" else "no one"
+                            on_release: app.go_to = ["advanced"]
+                            on_release: app.change("background")
             MDBoxLayout:
                 id: background_var
             MDBoxLayout:
