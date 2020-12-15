@@ -173,12 +173,9 @@
     name: "advanced"
     md_bg_color: app.theme_cls.primary_color
     MDBoxLayout:
-        id: tudo
         MDBoxLayout:
-            id: esquerda
             orientation: "vertical"
             MDBoxLayout:
-                id: outras_duas_coisas
                 MDBoxLayout:
                     id: video_codec
                     orientation: "vertical"
@@ -256,10 +253,6 @@
                             text_color: 0, 0, 0, 1
                             text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
                             on_release: app.mask_menu.open()
-            MDBoxLayout:
-                id: background_var
-            MDBoxLayout:
-                id: mask
             MDBoxLayout:
                 id: muito_esquerda
                 MDBoxLayout:
