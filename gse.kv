@@ -225,6 +225,19 @@
                             text_color: 0, 0, 0, 1
                             text: app.ctrl.compression
                             on_release: app.compression_menu.open()
+                MDBoxLayout:
+                    id: scaler
+                    orientation: "vertical"
+                    MDLabel:
+                        text: "scaler"
+                        halign: "center"
+                    AnchorLayout:
+                        MDRaisedButton:
+                            id: scaler_button
+                            md_bg_color: app.theme_cls.accent_color
+                            text_color: 0, 0, 0, 1
+                            text: app.ctrl.scaler
+                            on_release: app.scaler_menu.open()
             MDBoxLayout:
                 id: background_var
             MDBoxLayout:
@@ -244,11 +257,6 @@
                     orientation: "vertical"
                     MDBoxLayout:
                         id: cuda_threads
-                    MDBoxLayout:
-                        id: duas_coisas
-                        MDBoxLayout:
-                            id: scaler
-                            orientation: "vertical"
                     MDBoxLayout:
                         id: monitor_log
                         MDBoxLayout:
