@@ -72,7 +72,7 @@ def on_{key}(self, instance, value):
 
 
 class GSE(MDApp):
-    sm = scaler_menu = compression_menu = video_codec_menu = audio_codec_menu = advanced = None
+    sm = mask_menu = scaler_menu = compression_menu = video_codec_menu = audio_codec_menu = advanced = None
     go_to = ["welcome"]
     ctrl = Control()
     video_codec_menu_items = [{"text": i} for i in ["default", "libx264 (.mp4)", "mpeg4 (.mp4)", "rawvideo (.avi)",
@@ -83,6 +83,7 @@ class GSE(MDApp):
                                                     "medium", "slow", "slower", "veryslow", "placebo"]]
     scaler_menu_items = [{"text": i} for i in ["fast_bilinear", "bilinear", "bicubic", "experimental", "neighbor",
                                                "area", "bicublin", "gauss", "sinc", "lanczos", "spline"]]
+    mask_menu_items = [{"text": i} for i in ["A.I.", "Video/Image"]]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -125,6 +126,15 @@ class GSE(MDApp):
         self.ctrl.scaler = instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
 
+    def mask_menu_callback(self, instance_menu, instance_menu_item):
+        if instance_menu_item.text == "A.I.":
+            self.ctrl.mask = ""
+            instance_menu.caller.text = "A.I."
+        else:
+            self.file_manager_open()
+            self.go_to = ["advanced"]
+        instance_menu.dismiss()
+
     def file_manager_open(self):
         # parent = os.path.dirname(os.path.abspath(os.getcwd()))
         home = os.path.expanduser("~")
@@ -139,6 +149,8 @@ class GSE(MDApp):
             self.ctrl.background = path
         elif self.sm.current == "ready":
             self.ctrl.output_dir = os.path.join(path, "")
+        elif self.sm.current == "advanced":
+            self.ctrl.mask = path
 
         self.change()
 
@@ -212,6 +224,13 @@ class GSE(MDApp):
             width_mult=4,
         )
         self.scaler_menu.bind(on_release=self.scaler_menu_callback)
+
+        self.mask_menu = MDDropdownMenu(
+            caller=self.advanced.ids.mask_button,
+            items=self.mask_menu_items,
+            width_mult=4,
+        )
+        self.mask_menu.bind(on_release=self.mask_menu_callback)
 
         self.change()
 

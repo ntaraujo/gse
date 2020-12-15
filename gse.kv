@@ -243,6 +243,19 @@
                             text: str(app.ctrl.background) if app.ctrl.background != "" else "no one"
                             on_release: app.go_to = ["advanced"]
                             on_release: app.change("background")
+                MDBoxLayout:
+                    id: mask
+                    orientation: "vertical"
+                    MDLabel:
+                        text: "mask"
+                        halign: "center"
+                    AnchorLayout:
+                        MDRaisedButton:
+                            id: mask_button
+                            md_bg_color: app.theme_cls.accent_color
+                            text_color: 0, 0, 0, 1
+                            text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
+                            on_release: app.mask_menu.open()
             MDBoxLayout:
                 id: background_var
             MDBoxLayout:
