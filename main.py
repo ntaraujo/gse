@@ -185,6 +185,13 @@ class GSE(MDApp):
             self.sm.current = self.go_to[-1]
             self.go_to.pop()
 
+    def monitor_radio(self, inst):
+        if inst.active:
+            if inst.op == "None":
+                self.ctrl.monitor = None
+            else:
+                self.ctrl.monitor = inst.op
+
     def build(self):
         self.theme_cls.primary_palette = "LightGreen"
         # self.theme_cls.theme_style = "Dark"
