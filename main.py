@@ -72,12 +72,14 @@ def on_{key}(self, instance, value):
 
 
 class GSE(MDApp):
-    sm = video_codec_menu = audio_codec_menu = advanced = None
+    sm = compression_menu = video_codec_menu = audio_codec_menu = advanced = None
     ctrl = Control()
     video_codec_menu_items = [{"text": f"{i}"} for i in ["default", "libx264 (.mp4)", "mpeg4 (.mp4)", "rawvideo (.avi)",
                                                          "png (.avi)", "libvorbis (.ogv)", "libvpx (.webm)"]]
     audio_codec_menu_items = [{"text": f"{i}"} for i in ["default", "libmp3lame (.mp3)", "libvorbis (.ogg)",
                                                          "libfdk_aac (.m4a)", "pcm_s16le (.wav)", "pcm_s32le (.wav)"]]
+    compression_menu_items = [{"text": f"{i}"} for i in ["ultrafast", "superfast", "veryfast", "faster", "fast",
+                                                         "medium", "slow", "slower", "veryslow", "placebo"]]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -110,6 +112,10 @@ class GSE(MDApp):
         else:
             self.ctrl.audio_codec = instance_menu_item.text.split()[0]
         instance_menu.caller.text = instance_menu_item.text
+        instance_menu.dismiss()
+
+    def compression_menu_callback(self, instance_menu, instance_menu_item):
+        self.ctrl.compression = instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
 
     def file_manager_open(self):
@@ -177,6 +183,13 @@ class GSE(MDApp):
             width_mult=4,
         )
         self.audio_codec_menu.bind(on_release=self.audio_codec_menu_callback)
+
+        self.compression_menu = MDDropdownMenu(
+            caller=self.advanced.ids.compression_button,
+            items=self.compression_menu_items,
+            width_mult=4,
+        )
+        self.compression_menu.bind(on_release=self.compression_menu_callback)
 
         return self.sm
 
