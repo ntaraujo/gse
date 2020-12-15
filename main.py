@@ -74,14 +74,14 @@ def on_{key}(self, instance, value):
 class GSE(MDApp):
     sm = scaler_menu = compression_menu = video_codec_menu = audio_codec_menu = advanced = None
     ctrl = Control()
-    video_codec_menu_items = [{"text": f"{i}"} for i in ["default", "libx264 (.mp4)", "mpeg4 (.mp4)", "rawvideo (.avi)",
-                                                         "png (.avi)", "libvorbis (.ogv)", "libvpx (.webm)"]]
-    audio_codec_menu_items = [{"text": f"{i}"} for i in ["default", "libmp3lame (.mp3)", "libvorbis (.ogg)",
-                                                         "libfdk_aac (.m4a)", "pcm_s16le (.wav)", "pcm_s32le (.wav)"]]
-    compression_menu_items = [{"text": f"{i}"} for i in ["ultrafast", "superfast", "veryfast", "faster", "fast",
-                                                         "medium", "slow", "slower", "veryslow", "placebo"]]
-    scaler_menu_items = [{"text": f"{i}"} for i in ["fast_bilinear", "bilinear", "bicubic", "experimental", "neighbor",
-                                                    "area", "bicublin", "gauss", "sinc", "lanczos", "spline"]]
+    video_codec_menu_items = [{"text": i} for i in ["default", "libx264 (.mp4)", "mpeg4 (.mp4)", "rawvideo (.avi)",
+                                                    "png (.avi)", "libvorbis (.ogv)", "libvpx (.webm)"]]
+    audio_codec_menu_items = [{"text": i} for i in ["default", "libmp3lame (.mp3)", "libvorbis (.ogg)",
+                                                    "libfdk_aac (.m4a)", "pcm_s16le (.wav)", "pcm_s32le (.wav)"]]
+    compression_menu_items = [{"text": i} for i in ["ultrafast", "superfast", "veryfast", "faster", "fast",
+                                                    "medium", "slow", "slower", "veryslow", "placebo"]]
+    scaler_menu_items = [{"text": i} for i in ["fast_bilinear", "bilinear", "bicubic", "experimental", "neighbor",
+                                               "area", "bicublin", "gauss", "sinc", "lanczos", "spline"]]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
