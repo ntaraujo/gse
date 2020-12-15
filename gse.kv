@@ -21,6 +21,7 @@
                 MDFlatButton:
                     text: "Upload new source"
                     on_release: app.file_manager_open()
+                    on_release: app.go_to = ["ready", "time", "background"]
                     font_size: "20sp"
 
 <Background>
@@ -50,12 +51,12 @@
                 MDFlatButton:
                     text: "No one (export the mask)"
                     on_release: app.ctrl.background = ""
-                    on_release: root.manager.current = "time"
+                    on_release: app.change()
                     font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
                     text: "Color"
-                    on_release: root.manager.current = "colors"
+                    on_release: app.change("colors")
                     font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
@@ -84,7 +85,7 @@
         anchor_y: "bottom"
         MDFloatingActionButton:
             icon: "check"
-            on_release: root.manager.current = "time"
+            on_release: app.change()
             on_release: app.ctrl.background = [c * 255 for c in [cp.color[0], cp.color[1], cp.color[2]]]
 
 <Time>
@@ -113,7 +114,7 @@
             AnchorLayout:
                 MDFlatButton:
                     text: "Default"
-                    on_release: root.manager.current = "ready"
+                    on_release: app.change()
                     font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
@@ -123,7 +124,7 @@
             AnchorLayout:
                 MDFlatButton:
                     text: "Go to advanced options"
-                    on_release: root.manager.current = "advanced"
+                    on_release: app.change("advanced")
                     font_size: "20sp"
 
 <Ready>

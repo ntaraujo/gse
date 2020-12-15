@@ -73,6 +73,7 @@ def on_{key}(self, instance, value):
 
 class GSE(MDApp):
     sm = scaler_menu = compression_menu = video_codec_menu = audio_codec_menu = advanced = None
+    go_to = ["welcome"]
     ctrl = Control()
     video_codec_menu_items = [{"text": i} for i in ["default", "libx264 (.mp4)", "mpeg4 (.mp4)", "rawvideo (.avi)",
                                                     "png (.avi)", "libvorbis (.ogv)", "libvpx (.webm)"]]
@@ -134,12 +135,12 @@ class GSE(MDApp):
         self.exit_manager()
         if self.sm.current == "welcome":
             self.ctrl.input = path
-            self.sm.current = "background"
         elif self.sm.current == "background":
             self.ctrl.background = path
-            self.sm.current = "time"
         elif self.sm.current == "ready":
             self.ctrl.output_dir = os.path.join(path, "")
+
+        self.change()
 
     def exit_manager(self, *args):
         self.manager_open = False
@@ -160,21 +161,29 @@ class GSE(MDApp):
         time_dialog.open()
 
     def get_time(self, instance, time):
-        if self.sm.current == "time":
-            self.sm.current = "ready"
+        self.change()
         return time
+
+    def change(self, to=None):
+        if to:
+            print(f"Changing to {to}")
+            self.sm.current = to
+        elif len(self.go_to) > 0:
+            print(f"Changing to {self.go_to[-1]}")
+            self.sm.current = self.go_to[-1]
+            self.go_to.pop()
 
     def build(self):
         self.theme_cls.primary_palette = "LightGreen"
         # self.theme_cls.theme_style = "Dark"
         self.sm = ScreenManager()
-        self.advanced = Advanced()
-        self.sm.add_widget(self.advanced)
         self.sm.add_widget(Welcome())
         self.sm.add_widget(Background())
         self.sm.add_widget(Colors())
         self.sm.add_widget(Time())
         self.sm.add_widget(Ready())
+        self.advanced = Advanced()
+        self.sm.add_widget(self.advanced)
 
         self.video_codec_menu = MDDropdownMenu(
             caller=self.advanced.ids.video_codec_button,
@@ -203,6 +212,8 @@ class GSE(MDApp):
             width_mult=4,
         )
         self.scaler_menu.bind(on_release=self.scaler_menu_callback)
+
+        self.change()
 
         return self.sm
 
