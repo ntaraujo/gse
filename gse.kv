@@ -253,6 +253,26 @@
                             text_color: 0, 0, 0, 1
                             text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
                             on_release: app.mask_menu.open()
+            MDBoxLayout:
+                MDLabel:
+                    text: "relative_mask_resolution"
+                    halign: "center"
+                MDSlider:
+                    min: 0
+                    max: 100
+                    value: app.ctrl.relative_mask_resolution
+                    color: app.theme_cls.accent_color
+                    on_value: app.ctrl.relative_mask_resolution = int(self.value)
+            MDBoxLayout:
+                MDLabel:
+                    text: "relative_mask_fps"
+                    halign: "center"
+                MDSlider:
+                    min: 0
+                    max: 100
+                    value: app.ctrl.relative_mask_fps
+                    color: app.theme_cls.accent_color
+                    on_value: app.ctrl.relative_mask_fps = int(self.value)
         MDBoxLayout:
             id: direita
             orientation: "vertical"
