@@ -281,7 +281,6 @@
                 MDBoxLayout:
                     orientation: "vertical"
                     Monitor:
-                        op: "None"
                     MDLabel:
                         text: "No"
                         halign: "center"
@@ -313,5 +312,5 @@
     unselected_color: app.theme_cls.accent_color
     pos_hint: {'center_x': .5, 'center_y': .5}
     on_active: app.monitor_radio(self)
-    active: True if self.op == app.ctrl.monitor or (self.op == "None" and not app.ctrl.monitor)else False
+    active: True if self.op == app.ctrl.monitor else False
     op: None
