@@ -190,6 +190,13 @@ class GSE(MDApp):
         if inst.active:
             self.ctrl.monitor = inst.op
 
+    def threads_button(self, up):
+        if up:
+            self.ctrl.threads += 1
+        else:
+            self.ctrl.threads -= 1
+        self.advanced.ids.threads_label.text = f"{self.ctrl.threads} threads"
+
     def build(self):
         self.theme_cls.primary_palette = "LightGreen"
         # self.theme_cls.theme_style = "Dark"
