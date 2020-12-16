@@ -307,6 +307,14 @@
                     _thumb_color_disabled: app.theme_cls.accent_color
                     active: app.ctrl.cuda
                     on_active: app.ctrl.cuda = self.active
+                MDLabel:
+                    text: "log"
+                    halign: "center"
+                MDSwitch:
+                    pos_hint: {'center_x': .5, 'center_y': .5}
+                    _thumb_color_disabled: app.theme_cls.accent_color
+                    active: app.ctrl.log
+                    on_active: app.ctrl.log = self.active
         MDBoxLayout:
             id: direita
             orientation: "vertical"
