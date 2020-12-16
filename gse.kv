@@ -334,10 +334,44 @@
                     active: app.ctrl.log
                     on_active: app.ctrl.log = self.active
         MDBoxLayout:
-            id: direita
             orientation: "vertical"
+            AnchorLayout:
+                Image:
+                    source: f"{app.ctrl.output_dir}{app.ctrl.output_name}.jpg"
+                MDSpinner:
+                    id: preview_spinner
+                    color: app.theme_cls.accent_color
+                    size_hint: None, None
+                    size: dp(46), dp(46)
+                    active: False
+            MDLabel:
+                text: "preview image saved in x"
+                halign: "center"
             MDBoxLayout:
-                id: preview_time
+                MDLabel:
+                    text: "get_frame"
+                    halign: "center"
+                MDSlider:
+                    min: 0
+                    max: 100
+                    value: app.ctrl.get_frame
+                    color: app.theme_cls.accent_color
+                    on_value: app.ctrl.get_frame = int(self.value)
+            MDLabel:
+                text: "Estimated time:"
+                halign: "center"
+            MDLabel:
+                text: "TIME"
+                halign: "center"
+            MDProgressBar:
+                value: 50
+                color: app.theme_cls.accent_color
+            AnchorLayout:
+                MDRaisedButton:
+                    md_bg_color: app.theme_cls.accent_color
+                    text_color: 0, 0, 0, 1
+                    text: "Ready!"
+                    on_release: app.change("ready")
 
 <Monitor@MDCheckbox>:
     group: 'monitor'
