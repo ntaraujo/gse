@@ -298,6 +298,15 @@
                     MDLabel:
                         text: "By progress bar"
                         halign: "center"
+            MDBoxLayout:
+                MDLabel:
+                    text: "cuda"
+                    halign: "center"
+                MDSwitch:
+                    pos_hint: {'center_x': .5, 'center_y': .5}
+                    _thumb_color_disabled: app.theme_cls.accent_color
+                    active: app.ctrl.cuda
+                    on_active: app.ctrl.cuda = self.active
         MDBoxLayout:
             id: direita
             orientation: "vertical"
