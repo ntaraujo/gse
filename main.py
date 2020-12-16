@@ -68,7 +68,8 @@ class Control(EventDispatcher):
 {key} = func(conf[key][0], allownone=conf[key][2])
 def on_{key}(self, instance, value):
     self.p.{key} = value
-    print(f'{key} changed to "{{value}}"')""")
+    c = f'"{{value}}"' if type(value) == str else str(value)
+    print(f'{key} changed to {{c}}')""")
 
 
 class GSE(MDApp):
