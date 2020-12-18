@@ -13,7 +13,6 @@ This project is under development and is based on [Deep BGRemove](https://github
 * Graphical interface (see [kivy branch](https://github.com/ntaraujo/gse/tree/kivy))
 * Work with more than just people images, but also objects and animals
 * Windows executable
-* ~~Module usability~~
 * Save projects to decrease processing time on multiple requests
 
 ## Quickstart
