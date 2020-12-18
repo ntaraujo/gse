@@ -182,6 +182,9 @@
                 MDStackLayout:
                     adaptive_height: True
                     spacing: "20sp"
+                    bigchild: video_codec_button.parent.width + audio_codec_button.parent.width + compression_button.parent.width + scaler_button.parent.width + background_button.parent.width + mask_button.parent.width + sp(180)
+                    size_hint_x: None
+                    width: self.parent.width if self.parent.width < self.bigchild else self.bigchild
                     MDBoxLayout:
                         orientation: "vertical"
                         adaptive_width: True
