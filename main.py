@@ -10,6 +10,7 @@ from datetime import datetime
 from kivymd.uix.menu import MDDropdownMenu
 from gse import Process
 from kivy.core.window import Window
+from kivymd.uix.selectioncontrol import MDCheckbox
 
 
 class Welcome(MDScreen):
@@ -118,6 +119,10 @@ class Advanced(MDScreen):
         self.ids.threads_label.text = f"{app.ctrl.threads} threads"
 
 
+class Monitor(MDCheckbox):
+    def monitor_radio(self):
+        if self.active:
+            app.ctrl.monitor = self.op
 
 
 class Ready(MDScreen):
@@ -233,9 +238,6 @@ class GSE(MDApp):
             self.sm.current = self.go_to[-1]
             self.go_to.pop()
 
-    def monitor_radio(self, inst):
-        if inst.active:
-            self.ctrl.monitor = inst.op
     def build(self):
         self.theme_cls.primary_palette = "LightGreen"
         # self.theme_cls.theme_style = "Dark"

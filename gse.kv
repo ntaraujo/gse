@@ -461,13 +461,13 @@
                     text: "Ready!"
                     on_release: app.change("ready")
 
-<Monitor@MDCheckbox>:
+<Monitor>:
     group: 'monitor'
     size_hint: None, None
     size: dp(48), dp(48)
     selected_color: app.theme_cls.accent_color
     unselected_color: app.theme_cls.accent_color
     pos_hint: {'center_x': .5, 'center_y': .5}
-    on_active: app.monitor_radio(self)
+    on_active: root.monitor_radio()
     active: True if self.op == app.ctrl.monitor else False
     op: None
