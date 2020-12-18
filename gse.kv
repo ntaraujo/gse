@@ -387,15 +387,11 @@
                                 icon: "chevron-up-circle-outline"
                                 pos_hint: {"center_x": .5, "center_y": .5}
                                 user_font_size: "36sp"
-                                theme_text_color: "Custom"
-                                text_color: app.theme_cls.accent_color
                                 on_release: root.threads_button(True)
                             MDIconButton:
                                 icon: "chevron-down-circle-outline"
                                 pos_hint: {"center_x": .5, "center_y": .5}
                                 user_font_size: "36sp"
-                                theme_text_color: "Custom"
-                                text_color: app.theme_cls.accent_color
                                 on_release: root.threads_button(False)
                 MDBoxLayout:
                     spacing: "20sp"
@@ -465,8 +461,7 @@
     group: 'monitor'
     size_hint: None, None
     size: dp(48), dp(48)
-    selected_color: app.theme_cls.accent_color
-    unselected_color: app.theme_cls.accent_color
+    selected_color: 0, 0, 0, 1
     pos_hint: {'center_x': .5, 'center_y': .5}
     on_active: root.monitor_radio()
     active: True if self.op == app.ctrl.monitor else False
