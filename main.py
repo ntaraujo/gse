@@ -180,7 +180,7 @@ class GSE(MDApp):
 
     def change(self, to=None):
         if to:
-            print(f"Changing to {to}")
+            print(f"Changing to {to} screen")
             self.sm.current = to
         elif len(self.go_to) > 0:
             print(f"Changing to {self.go_to[-1]}")
