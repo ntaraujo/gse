@@ -174,90 +174,138 @@
     name: "advanced"
     md_bg_color: app.theme_cls.primary_color
     MDBoxLayout:
+        padding: "20sp"
+        spacing: "20sp"
         MDBoxLayout:
             orientation: "vertical"
+            AnchorLayout:
+                MDStackLayout:
+                    adaptive_height: True
+                    spacing: "20sp"
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        adaptive_height: True
+                        MDLabel:
+                            text: "video_codec"
+                            bold: True
+                            halign: "center"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                        AnchorLayout:
+                            size_hint_x: None
+                            width: video_codec_button.width
+                            MDRaisedButton:
+                                id: video_codec_button
+                                md_bg_color: app.theme_cls.accent_color
+                                text_color: 0, 0, 0, 1
+                                text: app.ctrl.video_codec if app.ctrl.video_codec else "default"
+                                on_release: app.video_codec_menu.open()
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        adaptive_height: True
+                        MDLabel:
+                            text: "audio_codec"
+                            bold: True
+                            halign: "center"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                        AnchorLayout:
+                            size_hint_x: None
+                            width: audio_codec_button.width
+                            MDRaisedButton:
+                                id: audio_codec_button
+                                md_bg_color: app.theme_cls.accent_color
+                                text_color: 0, 0, 0, 1
+                                text: app.ctrl.audio_codec if app.ctrl.audio_codec else "default"
+                                on_release: app.audio_codec_menu.open()
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        adaptive_height: True
+                        MDLabel:
+                            text: "compression"
+                            bold: True
+                            halign: "center"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                        AnchorLayout:
+                            size_hint_x: None
+                            width: compression_button.width
+                            MDRaisedButton:
+                                id: compression_button
+                                md_bg_color: app.theme_cls.accent_color
+                                text_color: 0, 0, 0, 1
+                                text: app.ctrl.compression
+                                on_release: app.compression_menu.open()
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        adaptive_height: True
+                        MDLabel:
+                            text: "scaler"
+                            bold: True
+                            halign: "center"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                        AnchorLayout:
+                            size_hint_x: None
+                            width: scaler_button.width
+                            MDRaisedButton:
+                                id: scaler_button
+                                md_bg_color: app.theme_cls.accent_color
+                                text_color: 0, 0, 0, 1
+                                text: app.ctrl.scaler
+                                on_release: app.scaler_menu.open()
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        adaptive_height: True
+                        MDLabel:
+                            text: "background"
+                            bold: True
+                            halign: "center"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                        AnchorLayout:
+                            size_hint_x: None
+                            width: background_button.width
+                            MDRaisedButton:
+                                id: background_button
+                                md_bg_color: app.theme_cls.accent_color
+                                text_color: 0, 0, 0, 1
+                                text: str(app.ctrl.background) if app.ctrl.background != "" else "no one"
+                                on_release: app.go_to = ["advanced"]
+                                on_release: app.change("background")
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        adaptive_height: True
+                        MDLabel:
+                            text: "mask"
+                            bold: True
+                            halign: "center"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                        AnchorLayout:
+                            size_hint_x: None
+                            width: mask_button.width
+                            MDRaisedButton:
+                                id: mask_button
+                                md_bg_color: app.theme_cls.accent_color
+                                text_color: 0, 0, 0, 1
+                                text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
+                                on_release: app.mask_menu.open()
             MDBoxLayout:
-                MDBoxLayout:
-                    id: video_codec
-                    orientation: "vertical"
-                    MDLabel:
-                        text: "video_codec"
-                        halign: "center"
-                    AnchorLayout:
-                        MDRaisedButton:
-                            id: video_codec_button
-                            md_bg_color: app.theme_cls.accent_color
-                            text_color: 0, 0, 0, 1
-                            text: app.ctrl.video_codec if app.ctrl.video_codec else "default"
-                            on_release: app.video_codec_menu.open()
-                MDBoxLayout:
-                    id: audio_codec
-                    orientation: "vertical"
-                    MDLabel:
-                        text: "audio_codec"
-                        halign: "center"
-                    AnchorLayout:
-                        MDRaisedButton:
-                            id: audio_codec_button
-                            md_bg_color: app.theme_cls.accent_color
-                            text_color: 0, 0, 0, 1
-                            text: app.ctrl.audio_codec if app.ctrl.audio_codec else "default"
-                            on_release: app.audio_codec_menu.open()
-                MDBoxLayout:
-                    id: compression
-                    orientation: "vertical"
-                    MDLabel:
-                        text: "compression"
-                        halign: "center"
-                    AnchorLayout:
-                        MDRaisedButton:
-                            id: compression_button
-                            md_bg_color: app.theme_cls.accent_color
-                            text_color: 0, 0, 0, 1
-                            text: app.ctrl.compression
-                            on_release: app.compression_menu.open()
-                MDBoxLayout:
-                    id: scaler
-                    orientation: "vertical"
-                    MDLabel:
-                        text: "scaler"
-                        halign: "center"
-                    AnchorLayout:
-                        MDRaisedButton:
-                            id: scaler_button
-                            md_bg_color: app.theme_cls.accent_color
-                            text_color: 0, 0, 0, 1
-                            text: app.ctrl.scaler
-                            on_release: app.scaler_menu.open()
-                MDBoxLayout:
-                    orientation: "vertical"
-                    MDLabel:
-                        text: "background"
-                        halign: "center"
-                    AnchorLayout:
-                        MDRaisedButton:
-                            md_bg_color: app.theme_cls.accent_color
-                            text_color: 0, 0, 0, 1
-                            text: str(app.ctrl.background) if app.ctrl.background != "" else "no one"
-                            on_release: app.go_to = ["advanced"]
-                            on_release: app.change("background")
-                MDBoxLayout:
-                    id: mask
-                    orientation: "vertical"
-                    MDLabel:
-                        text: "mask"
-                        halign: "center"
-                    AnchorLayout:
-                        MDRaisedButton:
-                            id: mask_button
-                            md_bg_color: app.theme_cls.accent_color
-                            text_color: 0, 0, 0, 1
-                            text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
-                            on_release: app.mask_menu.open()
-            MDBoxLayout:
+                adaptive_height: True
+                spacing: "20sp"
                 MDLabel:
                     text: "relative_mask_resolution"
+                    bold: True
                     halign: "center"
+                    size_hint_x: None
+                    width: self.text_size[0]
                 MDSlider:
                     min: 0
                     max: 100
@@ -265,9 +313,14 @@
                     color: app.theme_cls.accent_color
                     on_value: app.ctrl.relative_mask_resolution = int(self.value)
             MDBoxLayout:
+                adaptive_height: True
+                spacing: "20sp"
                 MDLabel:
                     text: "relative_mask_fps"
+                    bold: True
                     halign: "center"
+                    size_hint_x: None
+                    width: self.text_size[0]
                 MDSlider:
                     min: 0
                     max: 100
@@ -275,66 +328,89 @@
                     color: app.theme_cls.accent_color
                     on_value: app.ctrl.relative_mask_fps = int(self.value)
             MDBoxLayout:
-                MDLabel:
-                    text: "monitor"
-                    halign: "center"
                 MDBoxLayout:
                     orientation: "vertical"
-                    Monitor:
+                    adaptive_width: True
                     MDLabel:
-                        text: "No"
+                        text: "monitor"
+                        bold: True
                         halign: "center"
+                        adaptive_height: True
+                    MDBoxLayout:
+                        Monitor:
+                        MDLabel:
+                            text: "No"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                    MDBoxLayout:
+                        Monitor:
+                            op: "gui"
+                        MDLabel:
+                            text: "Graphically"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                    MDBoxLayout:
+                        Monitor:
+                            op: "bar"
+                        MDLabel:
+                            text: "By progress bar"
+                            size_hint_x: None
+                            width: self.text_size[0]
+                MDBoxLayout:
+                    spacing: "20sp"
+                    orientation: "vertical"
+                    MDLabel:
+                        text: "cuda"
+                        bold: True
+                        halign: "center"
+                        adaptive_height: True
+                    AnchorLayout:
+                        MDSwitch:
+                            _thumb_color_disabled: app.theme_cls.accent_color
+                            active: app.ctrl.cuda
+                            on_active: app.ctrl.cuda = self.active
                 MDBoxLayout:
                     orientation: "vertical"
-                    Monitor:
-                        op: "gui"
                     MDLabel:
-                        text: "Graphically"
+                        id: threads_label
+                        text: f"{app.ctrl.threads} threads"
+                        bold: True
                         halign: "center"
+                        adaptive_height: True
+                    AnchorLayout:
+                        MDBoxLayout:
+                            adaptive_width: True
+                            MDIconButton:
+                                icon: "chevron-up-circle-outline"
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                user_font_size: "36sp"
+                                theme_text_color: "Custom"
+                                text_color: app.theme_cls.accent_color
+                                on_release: app.threads_button(True)
+                            MDIconButton:
+                                icon: "chevron-down-circle-outline"
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                user_font_size: "36sp"
+                                theme_text_color: "Custom"
+                                text_color: app.theme_cls.accent_color
+                                on_release: app.threads_button(False)
                 MDBoxLayout:
+                    spacing: "20sp"
                     orientation: "vertical"
-                    Monitor:
-                        op: "bar"
                     MDLabel:
-                        text: "By progress bar"
+                        text: "log"
+                        bold: True
                         halign: "center"
-            MDBoxLayout:
-                MDLabel:
-                    text: "cuda"
-                    halign: "center"
-                MDSwitch:
-                    pos_hint: {'center_x': .5, 'center_y': .5}
-                    _thumb_color_disabled: app.theme_cls.accent_color
-                    active: app.ctrl.cuda
-                    on_active: app.ctrl.cuda = self.active
-                MDLabel:
-                    id: threads_label
-                    text: f"{app.ctrl.threads} threads"
-                    halign: "center"
-                MDIconButton:
-                    icon: "chevron-up-circle-outline"
-                    pos_hint: {"center_x": .5, "center_y": .5}
-                    user_font_size: "36sp"
-                    theme_text_color: "Custom"
-                    text_color: app.theme_cls.accent_color
-                    on_release: app.threads_button(True)
-                MDIconButton:
-                    icon: "chevron-down-circle-outline"
-                    pos_hint: {"center_x": .5, "center_y": .5}
-                    user_font_size: "36sp"
-                    theme_text_color: "Custom"
-                    text_color: app.theme_cls.accent_color
-                    on_release: app.threads_button(False)
-                MDLabel:
-                    text: "log"
-                    halign: "center"
-                MDSwitch:
-                    pos_hint: {'center_x': .5, 'center_y': .5}
-                    _thumb_color_disabled: app.theme_cls.accent_color
-                    active: app.ctrl.log
-                    on_active: app.ctrl.log = self.active
+                        adaptive_height: True
+                    AnchorLayout:
+                        MDSwitch:
+                            _thumb_color_disabled: app.theme_cls.accent_color
+                            active: app.ctrl.log
+                            on_active: app.ctrl.log = self.active
         MDBoxLayout:
             orientation: "vertical"
+            size_hint_x: None
+            width: root.width / 3
             AnchorLayout:
                 Image:
                     source: f"{app.ctrl.output_dir}{app.ctrl.output_name}.jpg"
@@ -345,27 +421,36 @@
                     size: dp(46), dp(46)
                     active: False
             MDLabel:
+                adaptive_height: True
                 text: f"preview image saved in {app.ctrl.output_dir}{app.ctrl.output_name}.jpg"
                 halign: "center"
             MDBoxLayout:
                 MDLabel:
                     text: "get_frame"
+                    bold: True
                     halign: "center"
+                    size_hint_x: None
+                    width: self.text_size[0]
                 MDSlider:
                     min: 0
                     max: 100
                     value: app.ctrl.get_frame
                     color: app.theme_cls.accent_color
                     on_value: app.ctrl.get_frame = int(self.value)
-            MDLabel:
-                text: "Estimated time:"
-                halign: "center"
-            MDLabel:
-                text: "TIME"
-                halign: "center"
-            MDProgressBar:
-                value: 50
-                color: app.theme_cls.accent_color
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                MDLabel:
+                    text: "Estimated time:"
+                    halign: "center"
+                MDLabel:
+                    text: "TIME"
+                    bold: True
+                    halign: "center"
+                    font_size: "40sp"
+                MDProgressBar:
+                    value: 50
+                    color: app.theme_cls.accent_color
             AnchorLayout:
                 MDRaisedButton:
                     md_bg_color: app.theme_cls.accent_color
