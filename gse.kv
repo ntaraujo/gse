@@ -203,7 +203,7 @@
                                 md_bg_color: app.theme_cls.accent_color
                                 text_color: 0, 0, 0, 1
                                 text: app.ctrl.video_codec if app.ctrl.video_codec else "default"
-                                on_release: app.video_codec_menu.open()
+                                on_release: root.video_codec_menu.open()
                     MDBoxLayout:
                         orientation: "vertical"
                         adaptive_width: True
@@ -222,7 +222,7 @@
                                 md_bg_color: app.theme_cls.accent_color
                                 text_color: 0, 0, 0, 1
                                 text: app.ctrl.audio_codec if app.ctrl.audio_codec else "default"
-                                on_release: app.audio_codec_menu.open()
+                                on_release: root.audio_codec_menu.open()
                     MDBoxLayout:
                         orientation: "vertical"
                         adaptive_width: True
@@ -241,7 +241,7 @@
                                 md_bg_color: app.theme_cls.accent_color
                                 text_color: 0, 0, 0, 1
                                 text: app.ctrl.compression
-                                on_release: app.compression_menu.open()
+                                on_release: root.compression_menu.open()
                     MDBoxLayout:
                         orientation: "vertical"
                         adaptive_width: True
@@ -260,7 +260,7 @@
                                 md_bg_color: app.theme_cls.accent_color
                                 text_color: 0, 0, 0, 1
                                 text: app.ctrl.scaler
-                                on_release: app.scaler_menu.open()
+                                on_release: root.scaler_menu.open()
                     MDBoxLayout:
                         orientation: "vertical"
                         adaptive_width: True
@@ -299,7 +299,7 @@
                                 md_bg_color: app.theme_cls.accent_color
                                 text_color: 0, 0, 0, 1
                                 text: app.ctrl.mask if app.ctrl.mask != "" else "A.I."
-                                on_release: app.mask_menu.open()
+                                on_release: root.mask_menu.open()
             MDBoxLayout:
                 adaptive_height: True
                 spacing: "20sp"
@@ -389,14 +389,14 @@
                                 user_font_size: "36sp"
                                 theme_text_color: "Custom"
                                 text_color: app.theme_cls.accent_color
-                                on_release: app.threads_button(True)
+                                on_release: root.threads_button(True)
                             MDIconButton:
                                 icon: "chevron-down-circle-outline"
                                 pos_hint: {"center_x": .5, "center_y": .5}
                                 user_font_size: "36sp"
                                 theme_text_color: "Custom"
                                 text_color: app.theme_cls.accent_color
-                                on_release: app.threads_button(False)
+                                on_release: root.threads_button(False)
                 MDBoxLayout:
                     spacing: "20sp"
                     orientation: "vertical"
