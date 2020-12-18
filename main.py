@@ -167,7 +167,7 @@ def on_{key}(self, instance, value):
 
 
 class GSE(MDApp):
-    sm = mask_menu = scaler_menu = compression_menu = video_codec_menu = audio_codec_menu = advanced = None
+    sm = None
     go_to = ["welcome"]
     ctrl = Control()
 
@@ -247,8 +247,7 @@ class GSE(MDApp):
         self.sm.add_widget(Colors())
         self.sm.add_widget(Time())
         self.sm.add_widget(Ready())
-        self.advanced = Advanced()
-        self.sm.add_widget(self.advanced)
+        self.sm.add_widget(Advanced())
 
         self.change()
 
