@@ -252,4 +252,5 @@ class GSE(MDApp):
 
 if __name__ == "__main__":
     Window.maximize()
-    GSE().run()
+    app = GSE()
+    app.run()
