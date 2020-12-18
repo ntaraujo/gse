@@ -9,6 +9,7 @@ from kivymd.uix.picker import MDTimePicker, MDDatePicker
 from datetime import datetime
 from kivymd.uix.menu import MDDropdownMenu
 from gse import Process
+from kivy.core.window import Window
 
 
 class Welcome(MDScreen):
@@ -250,4 +251,5 @@ class GSE(MDApp):
 
 
 if __name__ == '__main__':
+    Window.maximize()
     GSE().run()
