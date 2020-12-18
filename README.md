@@ -7,12 +7,13 @@ This project is under development and is based on [Deep BGRemove](https://github
 * Work with video/image or a single video frame with people
 * Output a mask you can use in another editor or the video/image with the background already modified by a video/image/color
 * Apply a mask of your choice instead the A.I. generated one (e.g. a previous exported mask with this app)
+* Use as module
 
 ## Under development features
-* Graphical interface
+* Graphical interface (see [kivy branch](https://github.com/ntaraujo/gse/tree/kivy))
 * Work with more than just people images, but also objects and animals
 * Windows executable
-* Module usability
+* ~~Module usability~~
 * Save projects to decrease processing time on multiple requests
 
 ## Quickstart
@@ -61,7 +62,7 @@ And... get a coffe
 * __get_frame__: If you want a preview of the processing results (mainly the `relative_mask_resolution` setting) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
 
 ## Usage with IPython Notebook or Python Console
-Even under development, you can use these features by importing the `Process` module. Can be useful if you want to save time, since when gse.py is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
+You can use the features by importing the `Process` module. Can be useful if you want to save time, since when gse.py is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
 ```
 from gse import Process
 
