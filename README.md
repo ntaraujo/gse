@@ -51,6 +51,20 @@ python gse.py
 ```
 And... get a coffe
 
+## Graphically
+Install [kivy](https://kivy.org/doc/stable/gettingstarted/installation.html) and
+[kivymd](https://github.com/kivymd/KivyMD) at least 0.104.2
+([why](https://stackoverflow.com/questions/61307599/filemanager-code-using-kivymd-is-not-functioning)).
+E.g. on linux in time of write:
+```
+pip install kivy[full] https://github.com/kivymd/KivyMD/archive/master.zip
+```
+
+Run main.py:
+```
+python main.py
+```
+
 ## Basics of configuration file
 * __input__: The path to your existent video/image. The format must be supported by MoviePy. E.g. `"old_one.mp4"`
 * __output_dir__: Directory for outputting videos, images, temporary files and/or logs. Need a "/" or "\\" in the end. E.g `"/home/user/Videos/"`. If `""`, defaults to current directory
