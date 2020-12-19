@@ -444,6 +444,10 @@
                     value: app.ctrl.fake_get_frame
                     color: app.theme_cls.accent_color
                     on_value: app.ctrl.fake_get_frame = int(self.value)
+                MDIconButton:
+                    icon: "reload"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    user_font_size: "36sp"
             MDBoxLayout:
                 orientation: "vertical"
                 adaptive_height: True
