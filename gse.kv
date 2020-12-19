@@ -419,7 +419,7 @@
             width: root.width / 3
             AnchorLayout:
                 Image:
-                    source: f"{app.ctrl.output_dir}{app.ctrl.output_name}.jpg"
+                    source: app.ctrl.output_dir + app.ctrl.output_name + ".jpg"
                 MDSpinner:
                     id: preview_spinner
                     color: app.theme_cls.accent_color
@@ -428,7 +428,7 @@
                     active: False
             MDLabel:
                 adaptive_height: True
-                text: f"preview image saved in {app.ctrl.output_dir}{app.ctrl.output_name}.jpg"
+                text: "preview image saved in " + app.ctrl.output_dir + app.ctrl.output_name + ".jpg"
                 halign: "center"
             MDBoxLayout:
                 MDLabel:
