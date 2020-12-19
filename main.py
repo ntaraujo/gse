@@ -11,6 +11,8 @@ from kivymd.uix.menu import MDDropdownMenu
 from gse import Process
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
+import threading
+from time import sleep
 
 
 class Welcome(MDScreen):
@@ -100,6 +102,7 @@ class Advanced(MDScreen):
 
     def scaler_menu_callback(self, instance_menu, instance_menu_item):
         app.ctrl.scaler = instance_menu.caller.text = instance_menu_item.text
+        app.ctrl.do_again(1)
         instance_menu.dismiss()
 
     def mask_menu_callback(self, instance_menu, instance_menu_item):
@@ -109,6 +112,7 @@ class Advanced(MDScreen):
         else:
             app.file_manager_open()
             app.go_to = ["advanced"]
+        app.ctrl.do_again(1)
         instance_menu.dismiss()
 
     def threads_button(self, up):
@@ -165,6 +169,49 @@ def on_{key}(self, instance, value):
     c = f'"{{value}}"' if type(value) == str else str(value)
     print(f'{key} changed to {{c}}')""")
 
+    ps = [p.oinput, p.omask, p.obackground, p.save_file]
+    doing = [False for _ in ps]
+    done = [False for _ in ps]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.cs = [self.call_input, self.call_mask, self.call_background, self.call_save]
+
+    def do_again(self, n):
+        max = len(self.ps)
+        print(f"Scheduling processes from {n} until {max}")
+        for x in range(n, max):
+            self.done[x] = self.doing[x] = False
+
+    def call(self, n):
+        threading.Thread(target=self.cs[n]).start()
+
+    def base_call(self, n):
+        self.doing[n] = True
+        print(f"Process {n} started")
+        self.ps[n]()
+        self.done[n] = True
+        print(f"Process {n} finished")
+
+    def base_check(self, needed, next):
+        if not self.doing[needed]:
+            self.call(needed)
+        while not self.done[needed]:
+            sleep(1)
+        self.base_call(next)
+
+    def call_input(self):
+        self.base_call(0)
+
+    def call_mask(self):
+        self.base_check(0, 1)
+
+    def call_background(self):
+        self.base_check(1, 2)
+
+    def call_save(self):
+        self.base_check(2, 3)
+
 
 class GSE(MDApp):
     sm = None
@@ -198,8 +245,10 @@ class GSE(MDApp):
         self.exit_manager()
         if self.sm.current == "welcome":
             self.ctrl.input = path
+            self.ctrl.do_again(0)
         elif self.sm.current == "background":
             self.ctrl.background = path
+            self.ctrl.do_again(2)
         elif self.sm.current == "ready":
             self.ctrl.output_dir = os.path.join(path, "")
         elif self.sm.current == "advanced":
