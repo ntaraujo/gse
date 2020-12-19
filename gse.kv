@@ -465,8 +465,9 @@
     group: 'monitor'
     size_hint: None, None
     size: dp(48), dp(48)
-    selected_color: 0, 0, 0, 1
+    disabled_color: 0, 0, 0, 1
     pos_hint: {'center_x': .5, 'center_y': .5}
     on_active: root.monitor_radio()
     active: True if self.op == app.ctrl.monitor else False
     op: None
+    disabled: True if self.active else False
