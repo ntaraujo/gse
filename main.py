@@ -13,6 +13,8 @@ from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
 import threading
 from time import sleep
+import tempfile
+import shutil
 
 
 class Welcome(MDScreen):
@@ -42,6 +44,9 @@ class Advanced(MDScreen):
     scaler_menu_items = [{"text": i} for i in ["fast_bilinear", "bilinear", "bicubic", "experimental", "neighbor",
                                                "area", "bicublin", "gauss", "sinc", "lanczos", "spline"]]
     mask_menu_items = [{"text": i} for i in ["A.I.", "Video/Image"]]
+
+    tempdir = tempfile.mkdtemp()
+    frame_filename = os.path.join(tempdir, "temp_preview.jpg")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -151,6 +156,7 @@ class Control(EventDispatcher):
             'monitor': ["bar", "str", True],
             'log': [False, "bool", False],
             'get_frame': [0, "num", False],
+            'fake_get_frame': [0, "num", False],
             'mask': ["", "str", False]}
 
     for key in conf:
@@ -296,7 +302,8 @@ class GSE(MDApp):
         self.sm.add_widget(Colors())
         self.sm.add_widget(Time())
         self.sm.add_widget(Ready())
-        self.sm.add_widget(Advanced())
+        self.advanced = Advanced()
+        self.sm.add_widget(self.advanced)
 
         self.change()
 
@@ -307,3 +314,4 @@ if __name__ == "__main__":
     Window.maximize()
     app = GSE()
     app.run()
+    shutil.rmtree(app.advanced.tempdir)

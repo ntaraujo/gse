@@ -419,7 +419,7 @@
             width: root.width / 3
             AnchorLayout:
                 Image:
-                    source: app.ctrl.output_dir + app.ctrl.output_name + ".jpg"
+                    source: root.frame_filename
                 MDSpinner:
                     id: preview_spinner
                     color: app.theme_cls.accent_color
@@ -428,22 +428,22 @@
                     active: False
             MDLabel:
                 adaptive_height: True
-                text: "preview image saved in " + app.ctrl.output_dir + app.ctrl.output_name + ".jpg"
+                text: "temporary preview image saved in " + root.frame_filename
                 halign: "center"
             MDBoxLayout:
                 MDLabel:
-                    text: "get_frame"
+                    text: "preview"
                     bold: True
                     halign: "center"
                     size_hint_x: None
                     width: self.text_size[0]
                 MDSlider:
-                    id: get_frame_slider
+                    id: preview_slider
                     min: 0
                     max: 100
-                    value: app.ctrl.get_frame
+                    value: app.ctrl.fake_get_frame
                     color: app.theme_cls.accent_color
-                    on_value: app.ctrl.get_frame = int(self.value)
+                    on_value: app.ctrl.fake_get_frame = int(self.value)
             MDBoxLayout:
                 orientation: "vertical"
                 adaptive_height: True
