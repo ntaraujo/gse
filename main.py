@@ -190,14 +190,15 @@ def on_{key}(self, instance, value):
             self.done[x] = self.doing[x] = False
 
     def call(self, n):
-        threading.Thread(target=self.cs[n]).start()
+        threading.Thread(target=self.cs[n], daemon=True).start()
 
     def base_call(self, n):
-        self.doing[n] = True
-        print(f"Process {n} started")
-        self.ps[n]()
-        self.done[n] = True
-        print(f"Process {n} finished")
+        if not self.done[n]:
+            self.doing[n] = True
+            print(f"Process {n} started")
+            self.ps[n]()
+            self.done[n] = True
+            print(f"Process {n} finished")
 
     def base_check(self, needed, next):
         if not self.doing[needed]:
@@ -208,12 +209,15 @@ def on_{key}(self, instance, value):
 
     def call_input(self):
         self.base_call(0)
+        self.do_again(1)
 
     def call_mask(self):
         self.base_check(0, 1)
+        self.do_again(2)
 
     def call_background(self):
         self.base_check(1, 2)
+        self.do_again(3)
 
     def call_save(self):
         self.base_check(2, 3)
