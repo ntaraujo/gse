@@ -18,6 +18,7 @@
                     text: "Open the last project"
                     on_release: app.change("advanced")
                     font_size: "20sp"
+                    disabled: True
             AnchorLayout:
                 MDFlatButton:
                     text: "Upload new source"
@@ -113,6 +114,7 @@
                 MDFlatButton:
                     text: "Choose a deadline"
                     on_release: app.show_date_picker()
+                    disabled: True
                     font_size: "20sp"
             AnchorLayout:
                 MDFlatButton:
@@ -431,6 +433,7 @@
                     size_hint_x: None
                     width: self.text_size[0]
                 MDSlider:
+                    id: get_frame_slider
                     min: 0
                     max: 100
                     value: app.ctrl.get_frame
@@ -455,6 +458,7 @@
                     md_bg_color: app.theme_cls.accent_color
                     text_color: 0, 0, 0, 1
                     text: "Ready!"
+                    disabled: False if not get_frame_slider.value else True
                     on_release: app.change("ready")
 
 <Monitor>:
