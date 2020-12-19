@@ -419,6 +419,7 @@
             width: root.width / 3
             AnchorLayout:
                 Image:
+                    id: preview_image
                     source: root.frame_filename
                 MDSpinner:
                     id: preview_spinner
@@ -448,6 +449,7 @@
                     icon: "reload"
                     pos_hint: {"center_x": .5, "center_y": .5}
                     user_font_size: "36sp"
+                    on_release: root.update_preview_spinner(True)
             MDBoxLayout:
                 orientation: "vertical"
                 adaptive_height: True
@@ -467,7 +469,6 @@
                     md_bg_color: app.theme_cls.accent_color
                     text_color: 0, 0, 0, 1
                     text: "Ready!"
-                    disabled: False if not get_frame_slider.value else True
                     on_release: app.change("ready")
 
 <Monitor>:

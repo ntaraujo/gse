@@ -11,6 +11,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from gse import Process
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
+from kivy.clock import mainthread
 import threading
 from time import sleep
 import tempfile
@@ -85,6 +86,9 @@ class Advanced(MDScreen):
         )
         self.mask_menu.bind(on_release=self.mask_menu_callback)
 
+    def on_enter(self, *args):
+        threading.Thread(target=self.previews, daemon=True).start()
+
     def video_codec_menu_callback(self, instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
             app.ctrl.video_codec = None
@@ -127,6 +131,48 @@ class Advanced(MDScreen):
             app.ctrl.threads -= 1
         self.ids.threads_label.text = f"{app.ctrl.threads} threads"
 
+    def previews(self):
+        print("Starting previews loop")
+        while app.sm.current == "advanced":
+            sleep(1)
+            if self.ids.preview_spinner.active:
+                self.first_step()
+        print("Finishing previews loop")
+
+    def first_step(self):
+        print("First step of previews loop")
+        self.update_time(0, "waiting for preview")
+
+        app.ctrl.call(2)
+        while not app.ctrl.done[2]:
+            sleep(1)
+
+        self.update_preview_slider()
+        if app.ctrl.done[2]:
+            self.second_step()
+
+    def second_step(self):
+        print("Second step of previews loop")
+        tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
+        app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
+        self.update_preview_image()
+
+    @mainthread
+    def update_preview_spinner(self, _bool):
+        if _bool:
+            if self.ids.preview_slider.value:
+                self.ids.preview_spinner.active = True
+        else:
+            self.ids.preview_spinner.active = False
+
+    @mainthread
+    def update_preview_slider(self):
+        self.ids.preview_slider.max = app.ctrl.p.final_clip.fps
+
+    @mainthread
+    def update_preview_image(self):
+        self.ids.preview_image.reload()
+        self.update_preview_spinner(False)
 
 class Monitor(MDCheckbox):
     def monitor_radio(self):
