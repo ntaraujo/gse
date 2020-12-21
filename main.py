@@ -288,7 +288,10 @@ def on_{key}(self, instance, value):
         if not self.done[n]:
             self.doing[n] = True
             print(f"Process {n} started")
-            self.ps[n]()
+            if n == 3:
+                self.ps[n](MyLogger())
+            else:
+                self.ps[n]()
             self.done[n] = True
             print(f"Process {n} finished")
 
