@@ -16,6 +16,23 @@ import threading
 from time import sleep
 import tempfile
 import shutil
+from proglog import TqdmProgressBarLogger
+from mytqdm import mytqdm
+
+
+class MyLogger(TqdmProgressBarLogger):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tqdm = MyTqdmWithCallback
+
+
+class MyTqdmWithCallback(mytqdm):
+
+    def my_callback(self, format_dict):
+        if app.sm.current == "advanced":
+            time = self.format_interval(format_dict["elapsed_s"] + format_dict["remaining_s"])
+            app.advanced.update_time(format_dict["n"] * 10, time)
 
 
 class Welcome(MDScreen):
