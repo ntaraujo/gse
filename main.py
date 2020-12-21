@@ -65,6 +65,7 @@ class Advanced(MDScreen):
 
     tempdir = tempfile.mkdtemp()
     frame_filename = os.path.join(tempdir, "temp_preview.jpg")
+    temp_audiofile = os.path.join(tempdir, f"temp_audio.mp3")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -173,6 +174,28 @@ class Advanced(MDScreen):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
         app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
         self.update_preview_image()
+
+        if app.ctrl.done[2]:
+            self.third_step()
+
+    def third_step(self):
+        print("Third step of previews loop")
+
+        txt = self.ids.video_codec_button.text
+        ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
+        filename = os.path.join(self.tempdir, f"temp_video.{ext}")
+        temp_audiofile = self.temp_audiofile
+        codec = app.ctrl.p.video_codec
+        audio = app.ctrl.p.audio
+        preset = app.ctrl.p.compression
+        audio_codec = app.ctrl.p.audio_codec
+        write_logfile = app.ctrl.p.log
+        threads = app.ctrl.p.threads
+        logger = MyLogger()
+
+        app.ctrl.p.final_clip.write_videofile(filename, temp_audiofile=temp_audiofile, codec=codec, audio=audio,
+                                              preset=preset, audio_codec=audio_codec, write_logfile=write_logfile,
+                                              threads=threads, logger=logger)
 
     @mainthread
     def update_preview_spinner(self, _bool):
