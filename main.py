@@ -207,7 +207,6 @@ class Control(EventDispatcher):
             'monitor': ["gui", "str", True],
             'log': [False, "bool", False],
             'get_frame': [0, "num", False],
-            'fake_get_frame': [0, "num", False],
             'mask': ["", "str", False]}
 
     for key in conf:
@@ -229,6 +228,8 @@ def on_{key}(self, instance, value):
     ps = [p.oinput, p.omask, p.obackground, p.save_file]
     doing = [False for _ in ps]
     done = [False for _ in ps]
+
+    fake_get_frame = NumericProperty(50)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
