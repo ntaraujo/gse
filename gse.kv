@@ -457,12 +457,14 @@
                     text: "Estimated time:"
                     halign: "center"
                 MDLabel:
-                    text: "TIME"
+                    id: time_label
+                    text: "waiting for preview"
                     bold: True
                     halign: "center"
                     font_size: "40sp"
                 MDProgressBar:
-                    value: 50
+                    id: time_bar
+                    value: 0
                     color: app.theme_cls.accent_color
             AnchorLayout:
                 MDRaisedButton:
