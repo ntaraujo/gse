@@ -182,8 +182,7 @@ class Advanced(MDScreen):
 
 class Monitor(MDCheckbox):
     def monitor_radio(self):
-        if self.active:
-            app.ctrl.monitor = self.op
+        app.ctrl.monitor = self.op
 
 
 class Ready(MDScreen):
