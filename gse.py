@@ -141,11 +141,11 @@ class Process:
                 self.final_clip = self.composite(bg, maskedclip)
             self.audio = True
 
-    def save_file(self):  # save
+    def save_file(self, custom_logger="bar"):  # save
         filename = f'{self.output_dir}{self.output_name}.{self.extension}'
         temp_audiofile = f'{self.output_dir}TEMP_{self.output_name}.mp3'
         if self.monitor == "gui":
-            logger = "bar"  # yet
+            logger = custom_logger
         else:
             logger = self.monitor
         if self.input != "old_one.mp4" and not imghdr.what(self.input):
