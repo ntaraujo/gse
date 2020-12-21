@@ -174,6 +174,12 @@ class Advanced(MDScreen):
         self.ids.preview_image.reload()
         self.update_preview_spinner(False)
 
+    @mainthread
+    def update_time(self, bar, label):
+        self.ids.time_bar.value = bar
+        self.ids.time_label.text = label
+
+
 class Monitor(MDCheckbox):
     def monitor_radio(self):
         if self.active:
