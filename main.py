@@ -337,7 +337,7 @@ def on_{key}(self, instance, value):
 
 
 class GSE(MDApp):
-    sm = None
+    sm = advanced = None
     go_to = ["welcome"]
     ctrl = Control()
 
