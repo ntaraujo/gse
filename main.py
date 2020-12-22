@@ -65,7 +65,7 @@ class Advanced(MDScreen):
 
     tempdir = tempfile.mkdtemp()
     frame_filename = os.path.join(tempdir, "temp_preview.jpg")
-    temp_audiofile = os.path.join(tempdir, f"temp_audio.mp3")
+    temp_audiofile = os.path.join(tempdir, "temp_audio.mp3")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
