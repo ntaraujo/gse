@@ -451,15 +451,23 @@
             MDBoxLayout:
                 orientation: "vertical"
                 adaptive_height: True
-                MDLabel:
-                    text: "Estimated time:"
-                    halign: "center"
-                MDLabel:
-                    id: time_label
-                    text: "waiting for preview"
-                    bold: True
-                    halign: "center"
-                    font_size: "40sp"
+                MDBoxLayout:
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        MDLabel:
+                            text: "Estimated time:"
+                            halign: "center"
+                        MDLabel:
+                            id: time_label
+                            text: "00:00"
+                            bold: True
+                            halign: "center"
+                            font_size: "40sp"
+                            adaptive_height: True
+                    MDIconButton:
+                        icon: "reload"
+                        pos_hint: {"center_x": 0, "center_y": .5}
+                        user_font_size: "36sp"
                 MDProgressBar:
                     id: time_bar
                     value: 0
