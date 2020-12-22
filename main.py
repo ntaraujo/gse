@@ -266,6 +266,7 @@ def on_{key}(self, instance, value):
     print(f'{key} changed to {{c}}')""")
 
     ps = [p.oinput, p.omask, p.obackground, p.save_file]
+    do_lock = threading.Lock()
 
     fake_get_frame = NumericProperty(50)
 
@@ -276,6 +277,19 @@ def on_{key}(self, instance, value):
         self.done = [False for _ in self.ps]
         do_again1 = lambda obj, value: self.do_again(1)
         self.bind(relative_mask_fps=do_again1, relative_mask_resolution=do_again1)
+
+    def is_(self, state, ps):
+        with self.do_lock:
+            res = self.__dict__[state][ps]
+        return res
+
+    def wait(self, state, ps):
+        while not self.__dict__[state][ps]:
+            sleep(1)
+
+    def lock_wait(self, state, ps):
+        while not self.is_(state, ps):
+            sleep(1)
 
     def do_again(self, n):
         max = len(self.ps)
