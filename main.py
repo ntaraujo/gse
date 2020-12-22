@@ -150,15 +150,12 @@ class Advanced(MDScreen):
         self.ids.threads_label.text = f"{app.ctrl.threads} threads"
 
     def previews(self):
-        print("Starting previews loop")
         while app.sm.current == "advanced":
             sleep(1)
             if self.ids.preview_spinner.active:
                 self.first_step()
-        print("Finishing previews loop")
 
     def first_step(self):
-        print("First step of previews loop")
         self.update_time(0, "waiting for preview")
 
         app.ctrl.call(2)
@@ -170,7 +167,6 @@ class Advanced(MDScreen):
             self.second_step()
 
     def second_step(self):
-        print("Second step of previews loop")
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
         app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
         self.update_preview_image()
@@ -179,7 +175,6 @@ class Advanced(MDScreen):
             self.third_step()
 
     def third_step(self):
-        print("Third step of previews loop")
 
         txt = self.ids.video_codec_button.text
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
@@ -293,10 +288,10 @@ def on_{key}(self, instance, value):
 
     def do_again(self, n):
         max = len(self.ps)
-        print(f"Scheduling processes from {n} until {max}")
         with self.do_lock:
             for x in range(n, max):
                 self.done[x] = self.doing[x] = False
+        print(f"Processes from {n} until {max} scheduled")
 
     def call(self, n):
         threading.Thread(target=self.cs[n], daemon=True).start()
@@ -403,10 +398,8 @@ class GSE(MDApp):
 
     def change(self, to=None):
         if to:
-            print(f"Changing to {to} screen")
             self.sm.current = to
         elif len(self.go_to) > 0:
-            print(f"Changing to {self.go_to[-1]}")
             self.sm.current = self.go_to[-1]
             self.go_to.pop()
 
