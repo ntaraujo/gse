@@ -274,6 +274,8 @@ def on_{key}(self, instance, value):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.cs = [self.call_input, self.call_mask, self.call_background, self.call_save]
+        do_again1 = lambda obj, value: self.do_again(1)
+        self.bind(relative_mask_fps=do_again1, relative_mask_resolution=do_again1)
 
     def do_again(self, n):
         max = len(self.ps)

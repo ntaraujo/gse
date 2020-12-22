@@ -320,7 +320,6 @@
                     value: app.ctrl.relative_mask_resolution
                     color: app.theme_cls.accent_color
                     on_value: app.ctrl.relative_mask_resolution = int(self.value)
-                    on_value: app.ctrl.do_again(1)
             MDBoxLayout:
                 adaptive_height: True
                 spacing: "20sp"
@@ -336,7 +335,6 @@
                     value: app.ctrl.relative_mask_fps
                     color: app.theme_cls.accent_color
                     on_value: app.ctrl.relative_mask_fps = int(self.value)
-                    on_value: app.ctrl.do_again(1)
             MDBoxLayout:
                 MDBoxLayout:
                     orientation: "vertical"
