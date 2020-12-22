@@ -105,7 +105,8 @@ class Advanced(MDScreen):
         self.mask_menu.bind(on_release=self.mask_menu_callback)
 
     def on_enter(self, *args):
-        threading.Thread(target=self.previews, daemon=True).start()
+        threading.Thread(target=self.preview_queue, daemon=True).start()
+        threading.Thread(target=self.time_queue, daemon=True).start()
 
     def video_codec_menu_callback(self, instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
@@ -149,33 +150,37 @@ class Advanced(MDScreen):
             app.ctrl.threads -= 1
         self.ids.threads_label.text = f"{app.ctrl.threads} threads"
 
-    def previews(self):
+    def preview_queue(self):
         while app.sm.current == "advanced":
             sleep(1)
             if self.ids.preview_spinner.active:
-                self.first_step()
+                self.first_step_preview()
 
-    def first_step(self):
-        self.update_time(0, "waiting for preview")
-
-        app.ctrl.call(2)
-        while not app.ctrl.done[2]:
+    def time_queue(self):
+        while app.sm.current == "advanced":
             sleep(1)
+            if not self.ids.time_bar.value:
+                self.first_step_time()
 
+    def first_step_preview(self):
+        app.ctrl.call(2)
+        app.ctrl.lock_wait("done", 2)
         self.update_preview_slider()
-        if app.ctrl.done[2]:
-            self.second_step()
+        if app.ctrl.is_("done", 2):
+            self.second_step_preview()
 
-    def second_step(self):
+    def second_step_preview(self):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
         app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
         self.update_preview_image()
 
-        if app.ctrl.done[2]:
-            self.third_step()
+    def first_step_time(self):
+        app.ctrl.call(2)
+        app.ctrl.lock_wait("done", 2)
+        if app.ctrl.is_("done", 2):
+            self.second_step_time()
 
-    def third_step(self):
-
+    def second_step_time(self):
         txt = self.ids.video_codec_button.text
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
         filename = os.path.join(self.tempdir, f"temp_video.{ext}")

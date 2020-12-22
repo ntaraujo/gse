@@ -468,9 +468,10 @@
                         icon: "reload"
                         pos_hint: {"center_x": 0, "center_y": .5}
                         user_font_size: "36sp"
+                        on_release: root.update_time(0, "00:00")
                 MDProgressBar:
                     id: time_bar
-                    value: 0
+                    value: 100
                     color: app.theme_cls.accent_color
             AnchorLayout:
                 MDRaisedButton:
