@@ -294,32 +294,34 @@ def on_{key}(self, instance, value):
     def do_again(self, n):
         max = len(self.ps)
         print(f"Scheduling processes from {n} until {max}")
-        for x in range(n, max):
-            self.done[x] = self.doing[x] = False
+        with self.do_lock:
+            for x in range(n, max):
+                self.done[x] = self.doing[x] = False
 
     def call(self, n):
         threading.Thread(target=self.cs[n], daemon=True).start()
 
     def base_call(self, n):
-        if not self.done[n]:
-            self.doing[n] = True
-            print(f"Process {n} started")
-            if n == 3:
-                self.ps[n](MyLogger())
-            else:
-                self.ps[n]()
-            self.done[n] = True
-            print(f"Process {n} finished")
+        with self.do_lock:
+            if not self.done[n]:
+                self.doing[n] = True
+                print(f"Process {n} started")
+                if n == 3:
+                    self.ps[n](MyLogger())
+                else:
+                    self.ps[n]()
+                self.done[n] = True
+                print(f"Process {n} finished")
 
     def base_check(self, needed, next):
-        if not self.doing[needed]:
-            self.call(needed)
-        while not self.done[needed]:
-            sleep(1)
+        if needed is not None:
+            if not self.is_("doing", needed):
+                self.call(needed)
+            self.lock_wait("done", needed)
         self.base_call(next)
 
     def call_input(self):
-        self.base_call(0)
+        self.base_check(None, 0)
         self.do_again(1)
 
     def call_mask(self):
