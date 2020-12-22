@@ -266,14 +266,14 @@ def on_{key}(self, instance, value):
     print(f'{key} changed to {{c}}')""")
 
     ps = [p.oinput, p.omask, p.obackground, p.save_file]
-    doing = [False for _ in ps]
-    done = [False for _ in ps]
 
     fake_get_frame = NumericProperty(50)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.cs = [self.call_input, self.call_mask, self.call_background, self.call_save]
+        self.doing = [False for _ in self.ps]
+        self.done = [False for _ in self.ps]
         do_again1 = lambda obj, value: self.do_again(1)
         self.bind(relative_mask_fps=do_again1, relative_mask_resolution=do_again1)
 
