@@ -37,6 +37,25 @@ class MyTqdmWithCallback(mytqdm):
             app.advanced.update_time(format_dict["n"] * 10, time)
 
 
+class MyThread(threading.Thread):
+
+    def __init__(self, target, args=None, daemon=True, *idont, **know):
+        super().__init__(daemon=daemon, *idont, **know)
+        self.target, self.args = target, args
+
+    def run(self):
+        try:
+            if self.args:
+                self.target(*self.args)
+            else:
+                self.target()
+        except Exception as e:
+            arg_txt = f"{self.args} as arguments" if self.args else "no arguments"
+            print(f"Exception in {self.target} with {arg_txt}\n{e}")
+            if app.ctrl.do_lock.locked():
+                app.ctrl.do_lock.release()
+
+
 class ItemDrawer(OneLineIconListItem):
     icon = StringProperty()
     to_screen = StringProperty()
@@ -129,8 +148,8 @@ class Advanced(MDScreen):
         self.mask_menu.bind(on_release=self.mask_menu_callback)
 
     def on_enter(self, *args):
-        threading.Thread(target=self.preview_queue, daemon=True).start()
-        threading.Thread(target=self.time_queue, daemon=True).start()
+        MyThread(target=self.preview_queue).start()
+        MyThread(target=self.time_queue).start()
 
     def video_codec_menu_callback(self, instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
@@ -326,7 +345,7 @@ def on_{key}(self, instance, value):
         print(f"Processes from {n} until {max} scheduled")
 
     def call(self, n):
-        threading.Thread(target=self.cs[n], daemon=True).start()
+        MyThread(target=self.cs[n]).start()
 
     def base_call(self, n):
         if not self.done[n]:
