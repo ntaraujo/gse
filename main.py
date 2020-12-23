@@ -8,6 +8,7 @@ from kivy.event import EventDispatcher
 from kivymd.uix.picker import MDTimePicker, MDDatePicker
 from datetime import datetime
 from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.stacklayout import MDStackLayout
 from gse import Process
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
@@ -264,6 +265,20 @@ class Advanced(MDScreen):
     def update_time(self, bar, label):
         self.ids.time_bar.value = bar
         self.ids.time_label.text = label
+
+
+class CenteredStackLayout(MDStackLayout):
+    bigchild = NumericProperty()
+
+    def do_layout(self, *args):
+        super().do_layout(*args)
+        self.set_bigchild()
+
+    def set_bigchild(self):
+        bigchild = 0
+        for child in self.children:
+            bigchild += child.width
+        self.bigchild = bigchild + self.spacing[1] * 9
 
 
 class Monitor(MDCheckbox):
