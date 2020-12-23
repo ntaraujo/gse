@@ -338,6 +338,9 @@ def on_{key}(self, instance, value):
             sleep(1)
 
     def do_again(self, n):
+        MyThread(target=self.do_again_base, args=(n,)).start()
+
+    def do_again_base(self, n):
         max = len(self.ps)
         with self.do_lock:
             for x in range(n, max):
