@@ -171,8 +171,10 @@ class Advanced(MDScreen):
 
     def second_step_preview(self):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
+        print(f"Saving to {self.frame_filename}")
         app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
         self.update_preview_image()
+        print("Image preview updated")
 
     def first_step_time(self):
         app.ctrl.call(2)
@@ -193,6 +195,7 @@ class Advanced(MDScreen):
         threads = app.ctrl.p.threads
         logger = MyLogger()
 
+        print(f"Saving to {filename}")
         app.ctrl.p.final_clip.write_videofile(filename, temp_audiofile=temp_audiofile, codec=codec, audio=audio,
                                               preset=preset, audio_codec=audio_codec, write_logfile=write_logfile,
                                               threads=threads, logger=logger)
