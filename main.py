@@ -190,8 +190,7 @@ class Advanced(MDScreen):
         app.ctrl.call(2)
         app.ctrl.lock_wait("done", 2)
         self.update_preview_slider()
-        if app.ctrl.is_("done", 2):
-            self.second_step_preview()
+        self.second_step_preview()
 
     def second_step_preview(self):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
@@ -203,8 +202,7 @@ class Advanced(MDScreen):
     def first_step_time(self):
         app.ctrl.call(2)
         app.ctrl.lock_wait("done", 2)
-        if app.ctrl.is_("done", 2):
-            self.second_step_time()
+        self.second_step_time()
 
     def second_step_time(self):
         txt = self.ids.video_codec_button.text
