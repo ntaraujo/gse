@@ -196,6 +196,7 @@ class Advanced(MDScreen):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
         print(f"Saving to {self.frame_filename}")
         app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
+        app.ctrl.do_lock.release()
         self.update_preview_image()
         print("Image preview updated")
 
@@ -221,6 +222,7 @@ class Advanced(MDScreen):
         app.ctrl.p.final_clip.write_videofile(filename, temp_audiofile=temp_audiofile, codec=codec, audio=audio,
                                               preset=preset, audio_codec=audio_codec, write_logfile=write_logfile,
                                               threads=threads, logger=logger)
+        app.ctrl.do_lock.release()
 
     @mainthread
     def update_preview_spinner(self, _bool):
@@ -304,9 +306,8 @@ def on_{key}(self, instance, value):
         self.bind(relative_mask_fps=do_again1, relative_mask_resolution=do_again1)
 
     def is_(self, state, ps):
-        with self.do_lock:
-            res = self.__dict__[state][ps]
-        return res
+        self.do_lock.acquire()
+        return self.__dict__[state][ps]
 
     def wait(self, state, ps):
         while not self.__dict__[state][ps]:
@@ -314,6 +315,7 @@ def on_{key}(self, instance, value):
 
     def lock_wait(self, state, ps):
         while not self.is_(state, ps):
+            self.do_lock.release()
             sleep(1)
 
     def do_again(self, n):
@@ -327,23 +329,26 @@ def on_{key}(self, instance, value):
         threading.Thread(target=self.cs[n], daemon=True).start()
 
     def base_call(self, n):
-        with self.do_lock:
-            if not self.done[n]:
-                self.doing[n] = True
-                print(f"Process {n} started")
-                if n == 3:
-                    self.ps[n](MyLogger())
-                else:
-                    self.ps[n]()
-                self.done[n] = True
-                print(f"Process {n} finished")
+        if not self.done[n]:
+            self.doing[n] = True
+            print(f"Process {n} started")
+            if n == 3:
+                self.ps[n](MyLogger())
+            else:
+                self.ps[n]()
+            self.done[n] = True
+            print(f"Process {n} finished")
 
     def base_check(self, needed, next):
         if needed is not None:
             if not self.is_("doing", needed):
+                self.do_lock.release()
                 self.call(needed)
             self.lock_wait("done", needed)
+        else:
+            self.do_lock.acquire()
         self.base_call(next)
+        self.do_lock.release()
 
     def call_input(self):
         self.base_check(None, 0)
