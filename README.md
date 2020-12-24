@@ -1,16 +1,17 @@
 # Green Screen Emulator
-This project is under development and is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgremove)
+This project is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgremove)
 
 ![example](https://user-images.githubusercontent.com/66187211/100396165-d544a880-3022-11eb-8996-dfcf3faea716.gif)
 
 ## Current features
-* Work with video/image or a single video frame with people
-* Output a mask you can use in another editor or the video/image with the background already modified by a video/image/color
+* Work with video/image with people
+* Output a mask you can use in another editor
+* Output the video/image with the background already modified by a video/image/color
 * Apply a mask of your choice instead the A.I. generated one (e.g. a previous exported mask with this app)
 * Use as module
+* Graphical interface
 
-## Under development features
-* Graphical interface (see [kivy branch](https://github.com/ntaraujo/gse/tree/kivy))
+## To do
 * Work with more than just people images, but also objects and animals
 * Windows executable
 * Save projects to decrease processing time on multiple requests
@@ -37,24 +38,11 @@ pip install moviepy dill
 
 Since PyTorch cannot be installed with pip in the same way on all platforms, `requirements.txt` serves as a reference for the package versions that have been tested.
 
-Now, rename `config.json.example` to `config.json` and edit the values to which attend your needs.
-E.g. on Linux:
-```
-mv config.json.example config.json
-xdg-open config.json
-```
-
-All done, you can run:
-```
-python gse.py
-```
-And... get a coffe
-
-## Graphically
+## Use with the graphical interface
 Install [kivy](https://kivy.org/doc/stable/gettingstarted/installation.html) and
 [kivymd](https://github.com/kivymd/KivyMD) at least 0.104.2
 ([why](https://stackoverflow.com/questions/61307599/filemanager-code-using-kivymd-is-not-functioning)).
-E.g. on linux in time of write:
+E.g. on linux at the time of writing:
 ```
 pip install kivy[full] https://github.com/kivymd/KivyMD/archive/master.zip
 ```
@@ -64,18 +52,38 @@ Run main.py:
 python main.py
 ```
 
-## Basics of configuration file
+## Use with a configuration file
+Rename `config.json.example` to `config.json` and edit the values to which attend your needs.
+E.g. on Linux:
+```
+mv config.json.example config.json
+xdg-open config.json
+```
+
+The file to run in this case is `gse.py`
+```
+python gse.py
+```
+
+## Basics of configuration file / variables
 * __input__: The path to your existent video/image. The format must be supported by MoviePy. E.g. `"old_one.mp4"`
+
 * __output_dir__: Directory for outputting videos, images, temporary files and/or logs. Need a "/" or "\\" in the end. E.g `"/home/user/Videos/"`. If `""`, defaults to current directory
+
 * __output_name__: Part of the generated file name. This will be {output_name}.{extension} if `get_frame` is `0`. E.g. `"new_one"`
+
 * __extension__: Video/image formats supported by MoviePy. If video, must correspond to `video_codec` and `input` must also to be a video. If image, `input` must to be an image. E.g `"mp4"` and `"jpg"`
+
 * __background__: Path to an image or RGB color or also video if `input` is a video. If `""` the output is a black and white mask you can use in another editor. RGB colors are typed in square brackets and with commas between parameters: `[R, G, B]`. E.g. `[0, 255, 0]` (green screen) and `"path/to/my/image.jpg"`
+
 * __relative_mask_resolution__: Depending on how big your `input` is, you may want to decrease the time spend analyzing it. This will not decrease the final output resolution but the quality and accuracy of the mask. E.g. `80` (%, percent)
+
 * __relative_mask_fps__: For the same reasons you may want to decrease the amount of frames in your video `input` that will be computed. This will not decrease the final fps of the person in scene or even the background fps. What is affected is how fluid is the movement of the mask that accompanies the person movement. Typically, if you have a 60fps video you can use a 30fps mask without noticeable changes on the video quality. E.g. `50` (%, percent)
+
 * __get_frame__: If you want a preview of the processing results (mainly the `relative_mask_resolution` setting) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
 
-## Usage with IPython Notebook or Python Console
-You can use the features by importing the `Process` module. Can be useful if you want to save time, since when gse.py is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
+## Use with IPython Notebook or Python Console
+You can use the features by importing the `Process` module. Can be useful if you want to save time, since when the program is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
 ```
 from gse import Process
 
@@ -103,7 +111,7 @@ p.omask()
 from moviepy.video.fx.fadein import fadein
 p.mask_clip = p.mask_clip.fx(fadein, 2)
 
-# Make the final clip based on the background choice and let it available as p.final_clip.
+# Make the final clip based on the background choice and let it available as p.final_clip
 # Also set p.audio which will say to the next method if the output video
 # would has audio or not (p.mask_clip and p.input_clip must to exist)
 p.obackground()
@@ -136,7 +144,7 @@ p.final_clip.ipython_display(t=15)
 
 # Note that for video, the longest time is spent in p.save_file(), so there is no much to do for saving this time
 
-# Experimental, I don't know if will work:
+# Experimental:
 
 # Save the entire Process to use after
 p.save_project("my_project.gse")
