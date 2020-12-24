@@ -195,12 +195,8 @@
                         orientation: "vertical"
                         adaptive_width: True
                         adaptive_height: True
-                        MDLabel:
+                        Title:
                             text: "video_codec"
-                            bold: True
-                            halign: "center"
-                            size_hint_x: None
-                            width: self.text_size[0]
                         AnchorLayout:
                             size_hint_x: None
                             width: video_codec_button.width
@@ -214,12 +210,8 @@
                         orientation: "vertical"
                         adaptive_width: True
                         adaptive_height: True
-                        MDLabel:
+                        Title:
                             text: "audio_codec"
-                            bold: True
-                            halign: "center"
-                            size_hint_x: None
-                            width: self.text_size[0]
                         AnchorLayout:
                             size_hint_x: None
                             width: audio_codec_button.width
@@ -233,12 +225,8 @@
                         orientation: "vertical"
                         adaptive_width: True
                         adaptive_height: True
-                        MDLabel:
+                        Title:
                             text: "compression"
-                            bold: True
-                            halign: "center"
-                            size_hint_x: None
-                            width: self.text_size[0]
                         AnchorLayout:
                             size_hint_x: None
                             width: compression_button.width
@@ -252,12 +240,8 @@
                         orientation: "vertical"
                         adaptive_width: True
                         adaptive_height: True
-                        MDLabel:
+                        Title:
                             text: "scaler"
-                            bold: True
-                            halign: "center"
-                            size_hint_x: None
-                            width: self.text_size[0]
                         AnchorLayout:
                             size_hint_x: None
                             width: scaler_button.width
@@ -271,12 +255,8 @@
                         orientation: "vertical"
                         adaptive_width: True
                         adaptive_height: True
-                        MDLabel:
+                        Title:
                             text: "background"
-                            bold: True
-                            halign: "center"
-                            size_hint_x: None
-                            width: self.text_size[0]
                         AnchorLayout:
                             size_hint_x: None
                             width: background_button.width
@@ -291,12 +271,8 @@
                         orientation: "vertical"
                         adaptive_width: True
                         adaptive_height: True
-                        MDLabel:
+                        Title:
                             text: "mask"
-                            bold: True
-                            halign: "center"
-                            size_hint_x: None
-                            width: self.text_size[0]
                         AnchorLayout:
                             size_hint_x: None
                             width: mask_button.width
@@ -309,12 +285,8 @@
             MDBoxLayout:
                 adaptive_height: True
                 spacing: "20sp"
-                MDLabel:
+                Title:
                     text: "relative_mask_resolution"
-                    bold: True
-                    halign: "center"
-                    size_hint_x: None
-                    width: self.text_size[0]
                 MDSlider:
                     min: 0
                     max: 100
@@ -324,12 +296,8 @@
             MDBoxLayout:
                 adaptive_height: True
                 spacing: "20sp"
-                MDLabel:
+                Title:
                     text: "relative_mask_fps"
-                    bold: True
-                    halign: "center"
-                    size_hint_x: None
-                    width: self.text_size[0]
                 MDSlider:
                     min: 0
                     max: 100
@@ -518,3 +486,9 @@
     adaptive_height: True
     size_hint_x: None
     width: self.parent.width if self.parent.width < self.bigchild else self.bigchild
+
+<Title@MDLabel>
+    bold: True
+    halign: "center"
+    size_hint_x: None
+    width: self.text_size[0]
