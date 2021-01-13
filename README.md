@@ -12,9 +12,13 @@ This project is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgre
 * Graphical interface
 
 ## To do
+* Improve time spent
 * Work with more than just people images, but also objects and animals
+* Complete graphical interface
 * Windows executable
 * Save projects to decrease processing time on multiple requests
+* Improve configuration file experience and options
+* Make easier the module usability
 
 ## Quickstart
 Clone this repo:
@@ -76,7 +80,7 @@ python gse.py
 
 * __background__: Path to an image or RGB color or also video if `input` is a video. If `""` the output is a black and white mask you can use in another editor. RGB colors are typed in square brackets and with commas between parameters: `[R, G, B]`. E.g. `[0, 255, 0]` (green screen) and `"path/to/my/image.jpg"`
 
-* __relative_mask_resolution__: Depending on how big your `input` is, you may want to decrease the time spend analyzing it. This will not decrease the final output resolution but the quality and accuracy of the mask. E.g. `80` (%, percent)
+* __relative_mask_resolution__: Depending on how big your `input` is, you may want to decrease the time spent analyzing it. This will not decrease the final output resolution but the quality and accuracy of the mask. E.g. `80` (%, percent)
 
 * __relative_mask_fps__: For the same reasons you may want to decrease the amount of frames in your video `input` that will be computed. This will not decrease the final fps of the person in scene or even the background fps. What is affected is how fluid is the movement of the mask that accompanies the person movement. Typically, if you have a 60fps video you can use a 30fps mask without noticeable changes on the video quality. E.g. `50` (%, percent)
 
