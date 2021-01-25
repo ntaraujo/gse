@@ -22,7 +22,7 @@ This project is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgre
 
 ## Quickstart
 Clone this repo:
-```
+```sh
 git clone https://github.com/ntaraujo/gse.git
 cd gse
 ```
@@ -32,11 +32,11 @@ If you haven't, install python in your machine. Preferably [this release](https:
 Follow [these](https://pytorch.org/get-started/locally/) instructions to install PyTorch locally (you can omit torchaudio if you wish)
 
 E.g. the command to install the current PyTorch version for Windows and Linux with the Pip package manager and no CUDA features (not so cool):
-```
+```sh
 pip install torch==1.7.0+cpu torchvision==0.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 ```
 Then install MoviePy and Dill
-```
+```sh
 pip install moviepy dill
 ```
 
@@ -47,25 +47,25 @@ Install [kivy](https://kivy.org/doc/stable/gettingstarted/installation.html) and
 [kivymd](https://github.com/kivymd/KivyMD) at least 0.104.2
 ([why](https://stackoverflow.com/questions/61307599/filemanager-code-using-kivymd-is-not-functioning)).
 E.g. on linux at the time of writing:
-```
+```sh
 pip install kivy[full] https://github.com/kivymd/KivyMD/archive/master.zip
 ```
 
 Run main.py:
-```
+```sh
 python main.py
 ```
 
 ## Use with a configuration file
 Rename `config.json.example` to `config.json` and edit the values to which attend your needs.
 E.g. on Linux:
-```
+```sh
 mv config.json.example config.json
 xdg-open config.json
 ```
 
 The file to run in this case is `gse.py`
-```
+```sh
 python gse.py
 ```
 
@@ -88,7 +88,7 @@ python gse.py
 
 ## Use with IPython Notebook or Python Console
 You can use the features by importing the `Process` module. Can be useful if you want to save time, since when the program is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
-```
+```python
 from gse import Process
 
 p = Process()  # load with a default configuration file
