@@ -415,7 +415,7 @@ class Timer:
 if __name__ == '__main__':
     t = Timer()
 
-    p = Project("config.json")
-    p.processes()
+    p = Process("config.json")
+    p.all()
 
     t.finish()
