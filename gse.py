@@ -220,33 +220,46 @@ class Project:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
         print(f'Loaded from {path}\n{self.__dict__}')
 
-    def processes(self, processes: Iterable[int] = range(4)):
+    def processes(self, processes: Iterable[int] = range(4), asker: Callable[[Any], Any] = input, **update_args):
         if 0 in processes:
-            self.input_clip = get_input_clip(self.var("input", str), resize_algorithm=self.var("scaler", str))
+            args = {"path": self.var("input", str, asker=asker),
+                    "resize_algorithm": self.var("scaler", str, asker=asker)}
+
+            args.update(update_args)
+
+            self.input_clip = get_input_clip(**args)
         if 1 in processes:
-            self.mask_clip = get_mask_clip(self.input_clip, self.var("relative_mask_fps", int),
-                                           self.var("relative_mask_resolution", int), self.var("mask", str),
-                                           self.var("cuda", bool), resize_algorithm=self.var("scaler", str))
+            args = {"input_clip": self.input_clip,
+                    "relative_mask_fps": self.var("relative_mask_fps", int, asker),
+                    "relative_mask_resolution": self.var("relative_mask_resolution", int, asker),
+                    "mask_path": self.var("mask", str, asker),
+                    "cuda": self.var("cuda", bool, asker),
+                    "resize_algorithm": self.var("scaler", str, asker)}
+
+            args.update(update_args)
+
+            self.mask_clip = get_mask_clip(**args)
         if 2 in processes:
-            if self.var("background", "auto") == "":
+            if self.var("background", "auto", asker) == "":
                 self.audio = False
-            self.final_clip = get_final_clip(self.mask_clip, self.input_clip,
-                                             self.var("background", "auto"),
-                                             resize_algorithm=self.var("scaler", str))
+
+            args = {"mask_clip": self.mask_clip,
+                    "input_clip": self.input_clip,
+                    "background": self.var("background", "auto", asker),
+                    "resize_algorithm": self.var("scaler", str, asker)}
+
+            args.update(update_args)
+
+            self.final_clip = get_final_clip(**args)
         if 3 in processes:
-            file = '.'.join([self.var("output_name"), self.var("extension")])
-            path = abspath(join_path(self.var("output_dir"), file))
+            file = '.'.join([self.var("output_name", str, asker), self.var("extension", str, asker)])
+            path = abspath(join_path(self.var("output_dir", str, asker), file))
 
-            args = {"preset": self.var("compression", str),
+            args = {"clip": self.final_clip,
+                    "path": path,
+                    "frame": self.var("get_frame", int, asker),
+                    "preset": self.var("compression", str, asker),
                     "audio": self.audio,
-                    "write_logfile": self.var("log", bool),
-                    "threads": self.var("threads", int)}
-            if self.var("video_codec"):
-                args["codec"] = self.var("video_codec", str)
-            if self.var("audio_codec"):
-                args["audio_codec"] = self.var("audio_codec", str)
-
-            save_to_file(self.final_clip, path, frame=self.var("get_frame", int), **args)
 
 
 class Process:
@@ -388,6 +401,16 @@ class Process:
         else:
             back = back.resize(height=hf)
         return CompositeVideoClip([back, front.set_position("center")], size=front.size)
+                    "write_logfile": self.var("log", bool, asker),
+                    "threads": self.var("threads", int, asker)}
+            if self.var("video_codec", "auto", asker):
+                args["codec"] = self.var("video_codec", str, asker)
+            if self.var("audio_codec", "auto", asker):
+                args["audio_codec"] = self.var("audio_codec", str, asker)
+
+            args.update(update_args)
+
+            save_to_file(**args)
 
 
 class Timer:
