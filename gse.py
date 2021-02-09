@@ -194,8 +194,7 @@ class Project:
 
     @staticmethod
     def serialize(obj):
-        obj_type = type(obj).__qualname__
-        return f'<<non-serializable {obj_type}>>'
+        return f'<<non-serializable {type(obj).__qualname__}>>'
 
     def save(self, path: Union[IO[str], PathType]) -> None:
         file_type = splitext(path)[1]
