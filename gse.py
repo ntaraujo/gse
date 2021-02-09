@@ -221,17 +221,17 @@ class Project:
 
     def processes(self, processes: Iterable[int] = range(4)):
         if 0 in processes:
-            self.input_clip = get_input_clip(self.var("input"), resize_algorithm=self.var("scaler"))
+            self.input_clip = get_input_clip(self.var("input", str), resize_algorithm=self.var("scaler", str))
         if 1 in processes:
             self.mask_clip = get_mask_clip(self.input_clip, self.var("relative_mask_fps", int),
-                                           self.var("relative_mask_resolution", int), self.var("mask"),
-                                           self.var("cuda", bool), resize_algorithm=self.var("scaler"))
+                                           self.var("relative_mask_resolution", int), self.var("mask", str),
+                                           self.var("cuda", bool), resize_algorithm=self.var("scaler", str))
         if 2 in processes:
             if self.var("background", "auto") == "":
                 self.audio = False
             self.final_clip = get_final_clip(self.mask_clip, self.input_clip,
                                              self.var("background", "auto"),
-                                             resize_algorithm=self.var("scaler"))
+                                             resize_algorithm=self.var("scaler", str))
         if 3 in processes:
             file = '.'.join([self.var("output_name"), self.var("extension")])
             path = abspath(join_path(self.var("output_dir"), file))
