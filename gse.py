@@ -235,9 +235,17 @@ class Project:
         if 3 in processes:
             file = '.'.join([self.var("output_name"), self.var("extension")])
             path = abspath(join_path(self.var("output_dir"), file))
-            save_to_file(self.input_clip, path, frame=self.var("get_frame", int), codec=self.var("video_codec"),
-                         audio=self.audio, preset=self.var("compression"), audio_codec=self.var("audio_codec"),
-                         write_logfile=self.var("log", bool), threads=self.var("threads", int))
+
+            args = {"preset": self.var("compression", str),
+                    "audio": self.audio,
+                    "write_logfile": self.var("log", bool),
+                    "threads": self.var("threads", int)}
+            if self.var("video_codec"):
+                args["codec"] = self.var("video_codec", str)
+            if self.var("audio_codec"):
+                args["audio_codec"] = self.var("audio_codec", str)
+
+            save_to_file(self.final_clip, path, frame=self.var("get_frame", int), **args)
 
 
 class Process:
