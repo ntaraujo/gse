@@ -15,7 +15,7 @@ from dill import load as dload
 from os.path import dirname, basename, splitext, abspath
 from os.path import join as join_path
 from ast import literal_eval
-from typing import Union, Optional, Callable, Any, IO, Iterable
+from typing import Union, Optional, Callable, Any, IO, Iterable, NewType
 from os import PathLike
 
 
@@ -75,7 +75,7 @@ class MakeMask:
 
 
 ClipType = Union[VideoFileClip, ImageClip]
-FinalClipType = Union[ClipType, CompositeVideoClip]
+FinalClipType = NewType('FinalClipType', Union[ClipType, CompositeVideoClip])
 PathType = Union[str, bytes, PathLike]
 
 
