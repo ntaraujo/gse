@@ -121,16 +121,18 @@ def get_final_clip(mask_clip: ClipType, input_clip: ClipType, background: Union[
         if type(background) == list:  # if color
             rgb = (background[0], background[1], background[2])
             print(f"Using the RGB color {rgb} as the background of {input_clip.filename}")
-            return masked_clip.on_color(color=rgb)
+            to_return = masked_clip.on_color(color=rgb)
         elif is_image(background):
             print(f"Using {background} as image source to the background of {input_clip.filename}")
             background_clip = ImageClip(background, duration=masked_clip.duration)
-            return smooth_composite(background_clip, masked_clip)
+            to_return = smooth_composite(background_clip, masked_clip)
         else:
             print(f"Using {background} as video source to the background of {input_clip.filename}")
             background_clip = VideoFileClip(background, **videofileclip_args) \
                 .fx(loop, duration=masked_clip.duration).set_duration(input_clip.duration)
-            return smooth_composite(background_clip, masked_clip)
+            to_return = smooth_composite(background_clip, masked_clip)
+        to_return.filename = input_clip.filename
+        return to_return
     else:
         print("No background selected, skipping compositing")
         return mask_clip
@@ -145,9 +147,7 @@ def smooth_composite(back: ClipType, front: ClipType):
         back = back.fx(resize, width=wf)
     else:
         back = back.fx(resize, height=hf)
-    to_return = CompositeVideoClip([back, front.set_position("center")], size=front.size)
-    to_return.filename = front.filename
-    return to_return
+    return CompositeVideoClip([back, front.set_position("center")], size=front.size)
 
 
 def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, frame: int = 0,
