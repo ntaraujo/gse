@@ -75,6 +75,7 @@ class MakeMask:
 
 
 ClipType = Union[VideoFileClip, ImageClip]
+FinalClipType = Union[ClipType, CompositeVideoClip]
 PathType = Union[str, bytes, PathLike]
 
 
@@ -113,7 +114,7 @@ def get_mask_clip(input_clip: ClipType, relative_mask_fps: int = 100, relative_m
 
 
 def get_final_clip(mask_clip: ClipType, input_clip: ClipType, background: Union[list, PathType],
-                   **videofileclip_args) -> Union[ClipType, CompositeVideoClip]:
+                   **videofileclip_args) -> FinalClipType:
     if background != "":
         usable_mask = mask_clip.fx(resize, input_clip.size).to_mask()
         masked_clip = input_clip.set_mask(usable_mask)
@@ -149,7 +150,7 @@ def smooth_composite(back: ClipType, front: ClipType):
     return to_return
 
 
-def save_to_file(clip: ClipType, path: PathType, frame_from_time: int = 0, frame: int = 0,
+def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, frame: int = 0,
                  alpha: bool = False, **write_videofile_args):
     if is_image(clip.filename) or frame or frame_from_time:
         if frame:
