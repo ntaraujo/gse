@@ -187,7 +187,10 @@ class Project:
             except (ValueError, SyntaxError):
                 return to_return
         else:
-            return converter(to_return)
+            try:
+                return converter(to_return)
+            except ValueError:
+                return to_return
 
     @staticmethod
     def serialize(obj):
