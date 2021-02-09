@@ -221,7 +221,6 @@ class Project:
                         self.__dict__[var_name] = value
             else:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
-        print(f'Loaded from {path}\n{self.__dict__}')
 
     def processes(self, processes: Iterable[int] = range(4), asker: Callable[[Any], Any] = input, **update_args):
         if 0 in processes:
