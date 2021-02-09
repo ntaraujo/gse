@@ -15,12 +15,13 @@ from dill import load as dload
 from os.path import dirname, basename, splitext, abspath
 from os.path import join as join_path
 from ast import literal_eval
-from typing import Union, Optional, Callable, Any, IO, Iterable, NewType
+from typing import Union, Optional, Callable, Any, IO, Iterable, NewType, List
 from os import PathLike
+from numpy import ndarray
 
 
 class MakeMask:
-    def __init__(self, cuda):
+    def __init__(self, cuda: bool):
 
         self.cuda = cuda
         self.model = hub_load('pytorch/vision', 'deeplabv3_resnet101', pretrained=True)
@@ -40,7 +41,7 @@ class MakeMask:
         self.preprocess = Compose(
             [Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), ])
 
-    def __call__(self, img):
+    def __call__(self, img: ndarray) -> ndarray:
         frame_data = FloatTensor(img) / 255.0
 
         input_tensor = self.preprocess(frame_data.permute(2, 0, 1))
@@ -113,7 +114,7 @@ def get_mask_clip(input_clip: ClipType, relative_mask_fps: int = 100, relative_m
         return process_clip.fl_image(MakeMask(cuda))
 
 
-def get_final_clip(mask_clip: ClipType, input_clip: ClipType, background: Union[list, PathType],
+def get_final_clip(mask_clip: ClipType, input_clip: ClipType, background: Union[List[float], PathType],
                    **videofileclip_args) -> FinalClipType:
     if background != "":
         usable_mask = mask_clip.fx(resize, input_clip.size).to_mask()
@@ -171,7 +172,7 @@ class Project:
         if config:
             self.load(config)
 
-    def var(self, var: str, converter: Union[type, str, None] = None, asker: Callable[[Any], Any] = input) -> Any:
+    def var(self, var: str, converter: Union[type, str, None] = None, asker: Callable[[str], Any] = input) -> Any:
         if var in self.__dict__.keys():
             return self.__dict__[var]
         if asker == input:
@@ -205,7 +206,7 @@ class Project:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
         print(f'Saved to {path}\n{self.__dict__}')
 
-    def load(self, path: PathType):
+    def load(self, path: PathType) -> None:
         file_type = splitext(path)[1]
         with open(path, "rb") as project_file:
             if file_type == ".gse":
