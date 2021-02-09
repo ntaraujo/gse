@@ -191,9 +191,9 @@ class Project:
 
     @staticmethod
     def serialize(obj):
-        obj_type = str(type(obj))
-        print(f'Object of type {obj_type} was skipped')
-        return obj_type
+        obj_type = type(obj).__qualname__
+        print(f'Object of type {obj_type} was skipped from saving')
+        return f'<<non-serializable {obj_type}>>'
 
     def save(self, path: Union[IO[str], PathType]) -> None:
         file_type = splitext(path)[1]
