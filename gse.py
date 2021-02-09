@@ -212,7 +212,9 @@ class Project:
                 self.__dict__.update(dload(project_file).__dict__)
             elif file_type == ".json":
                 for var_name, value in jload(project_file).items():
-                    if var_name[0] != '_' and value[:18] != '<<non-serializable':
+                    if var_name[0] == '_' or (type(value) == str and value[:18] == '<<non-serializable'):
+                        pass
+                    else:
                         self.__dict__[var_name] = value
             else:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
