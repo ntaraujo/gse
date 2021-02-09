@@ -213,7 +213,6 @@ class Advanced(MDScreen):
 
     def second_step_preview(self):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
-        print(f"Saving to {self.frame_filename}")
         app.ctrl.p.processes([3], path=self.frame_filename, frame_from_time=tim)
         app.ctrl.do_lock.release()
         self.update_preview_image()
@@ -349,7 +348,7 @@ class Control(EventDispatcher):
         with self.do_lock:
             for x in range(n, max):
                 self.done[x] = self.doing[x] = False
-        print(f"Processes from {n} until {max} scheduled")
+        print(f"Processes from {n} until {max - 1} scheduled")
 
     def call(self, n):
         MyThread(target=self.cs[n]).start()
