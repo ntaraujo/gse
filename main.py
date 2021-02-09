@@ -9,7 +9,7 @@ from kivymd.uix.picker import MDTimePicker, MDDatePicker
 from datetime import datetime
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.stacklayout import MDStackLayout
-from gse import Process
+from gse import Project
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivy.clock import mainthread
@@ -109,7 +109,6 @@ class Advanced(MDScreen):
 
     tempdir = tempfile.mkdtemp()
     frame_filename = os.path.join(tempdir, "temp_preview.jpg")
-    temp_audiofile = os.path.join(tempdir, "temp_audio.mp3")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -189,10 +188,10 @@ class Advanced(MDScreen):
 
     def threads_button(self, up):
         if up:
-            app.ctrl.threads += 1
+            app.ctrl.threads = app.ctrl.p.var("threads", int) + 1
         else:
-            app.ctrl.threads -= 1
-        self.ids.threads_label.text = f"{app.ctrl.threads} threads"
+            app.ctrl.threads = app.ctrl.p.var("threads", int) - 1
+        self.ids.threads_label.text = f'{app.ctrl.p.var("threads", int)} threads'
 
     def preview_queue(self):
         while app.sm.current == "advanced":
@@ -215,7 +214,7 @@ class Advanced(MDScreen):
     def second_step_preview(self):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
         print(f"Saving to {self.frame_filename}")
-        app.ctrl.p.final_clip.save_frame(self.frame_filename, t=tim, withmask=False)
+        app.ctrl.p.processes([3], path=self.frame_filename, frame_from_time=tim)
         app.ctrl.do_lock.release()
         self.update_preview_image()
         print("Image preview updated")
@@ -229,19 +228,8 @@ class Advanced(MDScreen):
         txt = self.ids.video_codec_button.text
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
         filename = os.path.join(self.tempdir, f"temp_video.{ext}")
-        temp_audiofile = self.temp_audiofile
-        codec = app.ctrl.p.video_codec
-        audio = app.ctrl.p.audio
-        preset = app.ctrl.p.compression
-        audio_codec = app.ctrl.p.audio_codec
-        write_logfile = app.ctrl.p.log
-        threads = app.ctrl.p.threads
-        logger = MyLogger()
 
-        print(f"Saving to {filename}")
-        app.ctrl.p.final_clip.write_videofile(filename, temp_audiofile=temp_audiofile, codec=codec, audio=audio,
-                                              preset=preset, audio_codec=audio_codec, write_logfile=write_logfile,
-                                              threads=threads, logger=logger)
+        app.ctrl.p.processes([3], path=filename, logger=MyLogger())
         app.ctrl.do_lock.release()
 
     @mainthread
@@ -290,43 +278,44 @@ class Ready(MDScreen):
     pass
 
 
+def property_callback(instance, value, var_name):
+    instance.p.__dict__[var_name] = value
+    write = f'"{value}"' if type(value) == str else value
+    print(f'{instance.p}.{var_name} changed to {write}')
+
+
 class Control(EventDispatcher):
-    p = Process()
-    conf = {'input': ["old_one.mp4", "str", False],
-            'output_dir': ["", "str", False],
-            'output_name': ["new_one", "str", False],
-            'extension': ["mp4", "str", False],
-            'video_codec': [None, "str", True],
-            'audio_codec': [None, "str", True],
-            'background': [[0, 255, 0], "obj", False],
-            'relative_mask_resolution': [20, "num", False],
-            'relative_mask_fps': [20, "num", False],
-            'threads': [4, "num", False],
-            'cuda': [True, "bool", False],
-            'compression': ["ultrafast", "str", False],
-            'scaler': ["bicubic", "str", False],
-            'monitor': ["gui", "str", True],
-            'log': [False, "bool", False],
-            'get_frame': [0, "num", False],
-            'mask': ["", "str", False]}
+    p = Project('config.json')
 
-    for key in conf:
-        if conf[key][1] == "str":
-            func = StringProperty
-        elif conf[key][1] == "num":
-            func = NumericProperty
-        elif conf[key][1] == "bool":
-            func = BooleanProperty
-        else:
-            func = ObjectProperty
-        exec(f"""
-{key} = func(conf[key][0], allownone=conf[key][2])
-def on_{key}(self, instance, value):
-    self.p.{key} = value
-    c = f'"{{value}}"' if type(value) == str else str(value)
-    print(f'{key} changed to {{c}}')""")
+    conf = {'input': (str, False),
+            'output_dir': (str, False),
+            'output_name': (str, False),
+            'extension': (str, False),
+            'video_codec': (str, True),
+            'audio_codec': (str, True),
+            'background': ((str, list), False),
+            'relative_mask_resolution': (int, False),
+            'relative_mask_fps': (int, False),
+            'threads': (int, False),
+            'cuda': (bool, False),
+            'compression': (str, False),
+            'scaler': (str, False),
+            'monitor': (str, True),
+            'log': (bool, False),
+            'get_frame': (int, False),
+            'mask': (str, False)}
+    property_to = {str: StringProperty,
+                   int: NumericProperty,
+                   bool: BooleanProperty,
+                   (str, list): ObjectProperty}
 
-    ps = [p.oinput, p.omask, p.obackground, p.save_file]
+    for var_name, variable in p.__dict__.items():
+        if var_name in conf.keys():
+            types, allownone = conf[var_name]
+            vars()[var_name] = property_to[types](variable, allownone=allownone)
+            vars()['on_' + var_name] = lambda _, i, v, vn=var_name: property_callback(i, v, vn)
+
+    ps = range(4)
     do_lock = threading.Lock()
 
     fake_get_frame = NumericProperty(50)
@@ -370,9 +359,9 @@ def on_{key}(self, instance, value):
             self.doing[n] = True
             print(f"Process {n} started")
             if n == 3:
-                self.ps[n](MyLogger())
+                self.p.processes([3], logger=MyLogger())
             else:
-                self.ps[n]()
+                self.p.processes([n])
             self.done[n] = True
             print(f"Process {n} finished")
 
