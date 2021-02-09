@@ -198,23 +198,23 @@ class Project:
     def save(self, path: Union[IO[str], PathType]) -> None:
         file_type = splitext(path)[1]
         with open(f'{path}', "wb") as project_file:
-            if file_type == "gse":
+            if file_type == ".gse":
                 ddump(self, project_file)
-            elif file_type == "json":
+            elif file_type == ".json":
                 jdump(self.__dict__, path, default=self.serialize)
             else:
-                raise Exception(f'Impossible to load file with extension {file_type}. Accepted: "gse" and "json"')
+                raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
         print(f'Saved to {path}\n{self.__dict__}')
 
     def load(self, path: PathType):
         file_type = splitext(path)[1]
         with open(path, "rb") as project_file:
-            if file_type == "gse":
+            if file_type == ".gse":
                 self.__dict__.update(dload(project_file).__dict__)
-            elif file_type == "json":
                 self.__dict__.update(jload(project_file))
+            elif file_type == ".json":
             else:
-                raise Exception(f'Impossible to load file with extension {file_type}. Accepted: "gse" and "json"')
+                raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
         print(f'Loaded from {path}\n{self.__dict__}')
 
     def processes(self, processes: Iterable[int] = range(4)):
