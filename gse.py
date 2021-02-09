@@ -172,7 +172,7 @@ class Project:
         if config:
             self.load(config)
 
-    def var(self, var: str, converter: Union[type, str] = str, asker: Callable[[Any], Any] = input) -> Any:
+    def var(self, var: str, converter: Union[type, str, None] = None, asker: Callable[[Any], Any] = input) -> Any:
         if var in self.__dict__.keys():
             to_return = self.__dict__[var]
         else:
@@ -180,7 +180,9 @@ class Project:
                 to_return = input(f'Variable {var}: ')
             else:
                 to_return = asker(var)
-        if converter == "auto":
+        if not converter:
+            return to_return
+        elif converter == "auto":
             try:
                 return literal_eval(to_return)
             except ValueError:
