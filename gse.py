@@ -161,7 +161,6 @@ def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, 
         clip.save_frame(path, t=frame_from_time, withmask=alpha)
     else:
         temp_audiofile = abspath(join_path(dirname(path), splitext(basename(path))[0] + '.mp3'))
-        print(f'Saving as video to {path}')
         clip.write_videofile(path, temp_audiofile=temp_audiofile, **write_videofile_args)
 
 
@@ -192,7 +191,6 @@ class Project:
     @staticmethod
     def serialize(obj):
         obj_type = type(obj).__qualname__
-        print(f'Object of type {obj_type} was skipped from saving')
         return f'<<non-serializable {obj_type}>>'
 
     def save(self, path: Union[IO[str], PathType]) -> None:
@@ -202,6 +200,7 @@ class Project:
                 ddump(self, project_file)
             elif file_type == ".json":
                 jdump(self.__dict__, path, default=self.serialize)
+                print(f'Attention: .json projects do not keep non-serializable variables.')
             else:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
         print(f'Saved to {path}\n{self.__dict__}')
