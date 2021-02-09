@@ -174,12 +174,11 @@ class Project:
 
     def var(self, var: str, converter: Union[type, str, None] = None, asker: Callable[[Any], Any] = input) -> Any:
         if var in self.__dict__.keys():
-            to_return = self.__dict__[var]
+            return self.__dict__[var]
+        if asker == input:
+            to_return = input(f'Variable {var}: ')
         else:
-            if asker == input:
-                to_return = input(f'Variable {var}: ')
-            else:
-                to_return = asker(var)
+            to_return = asker(var)
         if not converter:
             return to_return
         elif converter == "auto":
