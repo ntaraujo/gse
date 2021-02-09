@@ -185,7 +185,7 @@ class Project:
         elif converter == "auto":
             try:
                 return literal_eval(to_return)
-            except ValueError:
+            except (ValueError, SyntaxError):
                 return to_return
         else:
             return converter(to_return)
