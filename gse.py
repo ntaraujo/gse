@@ -358,51 +358,51 @@ class Project:
         :param asker: parameter of gse.Project.var
         :param update_args: optional arguments to overwrite default ones in each function
         """
-        if 0 in processes:
-            args = {"path": self.var("input", str, asker=asker),
-                    "resize_algorithm": self.var("scaler", str, asker=asker)}
+        def var(name: str, converter: Union[type, str, None]):
+            return self.var(name, converter, asker)
 
-            args.update(update_args)
+        if 0 in processes:
+            args = {"path": var("input", str),
+                    "resize_algorithm": var("scaler", str)}
 
             self.input_clip = get_input_clip(**args)
         if 1 in processes:
             args = {"input_clip": self.input_clip,
-                    "relative_mask_fps": self.var("relative_mask_fps", int, asker),
-                    "relative_mask_resolution": self.var("relative_mask_resolution", int, asker),
-                    "mask_path": self.var("mask", str, asker),
-                    "cuda": self.var("cuda", bool, asker),
-                    "resize_algorithm": self.var("scaler", str, asker)}
+                    "relative_mask_fps": var("relative_mask_fps", int),
+                    "relative_mask_resolution": var("relative_mask_resolution", int),
+                    "mask_path": var("mask", str),
+                    "cuda": var("cuda", bool),
+                    "resize_algorithm": var("scaler", str)}
 
             args.update(update_args)
 
             self.mask_clip = get_mask_clip(**args)
         if 2 in processes:
-            if self.var("background", "auto", asker) == "":
-                self.audio = False
-
             args = {"mask_clip": self.mask_clip,
                     "input_clip": self.input_clip,
-                    "background": self.var("background", "auto", asker),
-                    "resize_algorithm": self.var("scaler", str, asker)}
+                    "background": var("background", "auto"),
+                    "resize_algorithm": var("scaler", str)}
 
             args.update(update_args)
 
             self.final_clip = get_final_clip(**args)
         if 3 in processes:
-            file = '.'.join([self.var("output_name", str, asker), self.var("extension", str, asker)])
-            path = abspath(join_path(self.var("output_dir", str, asker), file))
+            file = '.'.join([var("output_name", str), var("extension", str)])
+            path = abspath(join_path(var("output_dir", str), file))
+            if var("background", "auto") == "":
+                self.audio = False
 
             args = {"clip": self.final_clip,
                     "path": path,
-                    "frame": self.var("get_frame", int, asker),
-                    "preset": self.var("compression", str, asker),
+                    "frame": var("get_frame", int),
+                    "preset": var("compression", str),
                     "audio": self.audio,
-                    "write_logfile": self.var("log", bool, asker),
-                    "threads": self.var("threads", int, asker)}
-            if self.var("video_codec", "auto", asker):
-                args["codec"] = self.var("video_codec", str, asker)
-            if self.var("audio_codec", "auto", asker):
-                args["audio_codec"] = self.var("audio_codec", str, asker)
+                    "write_logfile": var("log", bool),
+                    "threads": var("threads", int)}
+            if var("video_codec", "auto"):
+                args["codec"] = var("video_codec", str)
+            if var("audio_codec", "auto"):
+                args["audio_codec"] = var("audio_codec", str)
 
             args.update(update_args)
 
