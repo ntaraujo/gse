@@ -8,7 +8,7 @@ This project is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgre
 * Output a mask you can use in another editor
 * Output the video/image with the background already modified by a video/image/color
 * Apply a mask of your choice instead the A.I. generated one (e.g. a previous exported mask with this app)
-* Use as module
+* Use as module, API
 * Graphical interface
 
 ## To do
@@ -18,7 +18,6 @@ This project is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgre
 * Windows executable
 * Save projects to decrease processing time on multiple requests
 * Improve configuration file experience and options
-* Make easier the module usability
 
 ## Quickstart
 Clone this repo:
@@ -87,28 +86,30 @@ python gse.py
 * __get_frame__: If you want a preview of the processing results (mainly the `relative_mask_resolution` setting) in your video `input`, set this variable to a number greater than 0. This will be the frame number exported as {output_dir}{output_name}.jpg. E.g. `535`
 
 ## Use with IPython Notebook or Python Console
-You can use the features by importing the `Process` module. Can be useful if you want to save time, since when the program is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
+Can be useful if you want to save time, since when the program is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
+Full docs [here](https://github.com/ntaraujo/gse/blob/master/gse.py)
 ```python
-from gse import Process
+import gse
 
-p = Process()  # load with a default configuration file
+p = gse.Project()  # load with no configuration
 
-p = Process("config.json")  # load with a configuration file
+p = gse.Project("config.json")  # load with a configuration file
 
-p.load_config("config.json")  # replace the configuration file
+p.load("my_project.gse")  # replace the Project variables with previous saved ones
+
+p.processes()  # do all at once
 
 p.relative_mask_fps = 60  # Modify a single variable
 
 # Load the input file and let it available as p.input_clip
-p.oinput()
+p.processes([0])
 
-# Change the duration to 6 seconds (for video inputs).
+# Change the video duration to 6 seconds
 # See what is possible at https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html
 p.input_clip = p.input_clip.set_duration(6)
 
-# Load the mask and let it available as p.mask_clip (p.input_clip must to exist)
-p.omask()
-# See type(p.mask_clip) to check the object's class
+# Load the mask and let it available as p.mask_clip
+p.processes([1])
 
 # Add a 2-second fade in effect to the mask
 # See other effects in https://zulko.github.io/moviepy/ref/videofx.html
@@ -116,45 +117,33 @@ from moviepy.video.fx.fadein import fadein
 p.mask_clip = p.mask_clip.fx(fadein, 2)
 
 # Make the final clip based on the background choice and let it available as p.final_clip
-# Also set p.audio which will say to the next method if the output video
-# would has audio or not (p.mask_clip and p.input_clip must to exist)
-p.obackground()
-# See type(p.final_clip) to check the object's class
+p.processes([2])
 
 # Check the final clip duration
-p.final_clip.duration
+print(p.final_clip.duration)
 
-# Export to file (p.final_clip and p.audio must to exist)
-p.save_file()
+# Export to file
+p.processes([3])
 
 # Use another mask with another resolution, but with the same input
 p.mask = "video_with_beautiful_shapes.mp4"
 p.relative_mask_resolution = 61
-p.omask()
-p.obackground()
-p.save_file()
+p.processes([1, 2, 3])
 
 # Use another background with the same mask and input
 p.background = [0, 0, 255]
-p.obackground()
-p.save_file()
+p.processes([2, 3])
 
 # Just export a preview of the video, with the same mask, input and background
-p.get_frame = 578
-p.save_file()
+p.processes([3], frame=578)
 
 # In IPython Notebook you can also preview with the following, where t is measured in seconds
 p.final_clip.ipython_display(t=15)
 
-# Note that for video, the longest time is spent in p.save_file(), so there is no much to do for saving this time
+# Note that for video, the longest time is spent in gse.save_to_file(), so there is no much to do for saving this time
 
-# Experimental:
-
-# Save the entire Process to use after
-p.save_project("my_project.gse")
-
-# Replace the entire current process with a saved one
-p.import_project("my_project.gse")
+# Save the entire Project to use after
+p.save("my_project.gse")
 ```
 
 ## Some examples
