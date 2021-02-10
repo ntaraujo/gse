@@ -22,6 +22,14 @@ from numpy import ndarray
 
 class MakeMask:
     def __init__(self, cuda: bool):
+        """
+        Loads the needed to run once for transforming frames with __call__ \n
+        E.g.
+            mm = MakeMask(True) \n
+            new_image = mm(old_image)
+
+        :param cuda: should the process occur on Nvidia GPU?
+        """
 
         self.cuda = cuda
         self.model = hub_load('pytorch/vision', 'deeplabv3_resnet101', pretrained=True)
@@ -42,6 +50,12 @@ class MakeMask:
             [Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), ])
 
     def __call__(self, img: ndarray) -> ndarray:
+        """
+        Transform a given frame to a black and white one, representing a mask for editors \n
+        E.g.
+            mm = MakeMask(True) \n
+            new_image = mm(old_image)
+        """
         frame_data = FloatTensor(img) / 255.0
 
         input_tensor = self.preprocess(frame_data.permute(2, 0, 1))
@@ -81,6 +95,15 @@ PathType = Union[str, bytes, PathLike]
 
 
 def get_input_clip(path: PathType, **videofileclip_args) -> ClipType:
+    """
+    Returns a moviepy clip for using with gse \n
+    E.g.
+        input_clip = get_input_clip("video.mp4") \n
+        mask_clip = get_mask_clip(input_clip)
+
+    :param path: video/image path
+    :param videofileclip_args: additional arguments for moviepy.video.io.VideoFileClip.__init__
+    """
     if is_image(path):
         print(f"Loading {path} as the main image source")
         return ImageClip(path, duration=1).set_fps(1)
@@ -91,6 +114,19 @@ def get_input_clip(path: PathType, **videofileclip_args) -> ClipType:
 
 def get_mask_clip(input_clip: ClipType, relative_mask_fps: int = 100, relative_mask_resolution: int = 100,
                   mask_path: PathType = "", cuda: bool = True, **videofileclip_args) -> ClipType:
+    """
+    Returns a moviepy clip with the right attributes to be used as mask for the input_clip \n
+    E.g.
+        mask_clip = get_mask_clip(input_clip) \n
+        final_clip = get_final_clip(mask_clip, input_clip, [0, 255, 0])
+
+    :param input_clip: got with gse.get_input_clip
+    :param relative_mask_fps: percentage. How fluid is the movement of the mask that accompanies the person movement?
+    :param relative_mask_resolution: percentage. The quality and accuracy of the mask
+    :param mask_path: if you want to use a saved mask video instead the A.I. generated one
+    :param cuda: should part of the process occur on Nvidia GPU?
+    :param videofileclip_args: additional arguments for moviepy.video.io.VideoFileClip.__init__
+    """
     if mask_path != "":  # if given
         if is_image(mask_path):
             print(f"Loading the image {mask_path} as the mask for {input_clip.filename}")
@@ -116,6 +152,18 @@ def get_mask_clip(input_clip: ClipType, relative_mask_fps: int = 100, relative_m
 
 def get_final_clip(mask_clip: ClipType, input_clip: ClipType, background: Union[List[float], PathType],
                    **videofileclip_args) -> FinalClipType:
+    """
+    Apply the mask_clip to the input_clip and use the background, in a way to be used with gse.save_to_file
+    or simply returns the mask_clip \n
+    E.g.
+        final_clip = get_final_clip(mask_clip, input_clip, [0, 255, 0]) \n
+        save_to_file(final_clip, "path/video.mp4")
+
+    :param mask_clip: got with gse.get_mask_clip
+    :param input_clip: got with gse.get_input_clip
+    :param background: color [R, G, B] or path to video/image or empty string, so the mask_clip is directly returned
+    :param videofileclip_args: additional arguments for moviepy.video.io.VideoFileClip.__init__
+    """
     if background != "":
         usable_mask = mask_clip.fx(resize, input_clip.size).to_mask()
         masked_clip = input_clip.set_mask(usable_mask)
@@ -140,6 +188,16 @@ def get_final_clip(mask_clip: ClipType, input_clip: ClipType, background: Union[
 
 
 def smooth_composite(back: ClipType, front: ClipType):
+    """
+    Composite two clips, one in back and other in front, resizing the back as needed \n
+    E.g.
+        new_video = smooth_composite(clip_with_big_size, clip_with_right_size) \n
+        print(new_video.size == clip_with_right_size.size) \n
+        # True
+
+    :param back: a moviepy clip
+    :param front: a moviepy clip
+    """
     wf, hf = front.size
     wb, hb = back.size
     rf = wf / hf
@@ -153,6 +211,21 @@ def smooth_composite(back: ClipType, front: ClipType):
 
 def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, frame: int = 0,
                  alpha: bool = False, **write_videofile_args):
+    """
+    Write a moviepy clip with the attribute clip.filename as video or image if the filename refers to an image or if
+    asked explicitly \n
+    E.g.
+        save_to_file(final_clip, "path/video.mp4") \n
+        from IPython.display import Video \n
+        Video("path/video.mp4")
+
+    :param clip: got with gse.get_final_clip
+    :param path: where and with what name and extension the clip should be saved
+    :param frame_from_time: if you want to extract the frame at X seconds
+    :param frame: if you want to extract the X° frame
+    :param alpha: if image, should keep the alpha channel (transparency, .png)?
+    :param write_videofile_args: additional arguments for moviepy.video.VideoClip.VideoClip.write_videofile
+    """
     if is_image(clip.filename) or frame or frame_from_time:
         if frame:
             frame_from_time = clip.fps / frame
@@ -167,12 +240,31 @@ def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, 
 
 class Project:
     def __init__(self, config: Optional[PathType] = None):
+        """
+        Define variables and optionally loads a project file \n
+        E.g.
+            p = Project("config.json")
+
+        :param config: path to a .json or .gse file
+        """
         self.input_clip = self.mask_clip = self.final_clip = None
         self.audio = True
         if config:
             self.load(config)
 
     def var(self, var: str, converter: Union[type, str, None] = None, asker: Callable[[str], Any] = input) -> Any:
+        """
+        Verify if a gse.Project variable exists before calling it. If doesn't, try to obtain it and optionally convert
+        to a specific type. The function does not create the variable. \n
+        E.g.
+            another_var = p.var("some_var", str, lambda var_name: var_name + ' not found') \n
+            another_var = p.var("some_var", "auto") \n
+            another_var = p.var("some_var", asker=lambda _: None)
+
+        :param var: The variable name as string
+        :param converter: if None, no converting, if "auto" find the probably right type, if a type e.g. bool, use it
+        :param asker: function which returns a value for the given variable name, if the variable doesn't exist
+        """
         if var in self.__dict__.keys():
             return self.__dict__[var]
         if asker == input:
@@ -194,9 +286,23 @@ class Project:
 
     @staticmethod
     def serialize(obj):
+        """
+        Return a default value for a non-serializable object \n
+        E.g.
+            print(p.serialize(lambda: None)) \n
+            # <<non-serializable function>>
+        """
         return f'<<non-serializable {type(obj).__qualname__}>>'
 
     def save(self, path: Union[IO[str], PathType]) -> None:
+        """
+        Save the gse.Project objects to a file, completely as a ".gse" or partially as a ".json" \n
+        E.g.
+            p.save("config.json") \n
+            p.load("config.json")
+
+        :param path: directory, base name and extension of file to save
+        """
         file_type = splitext(path)[1]
         with open(f'{path}', "wb") as project_file:
             if file_type == ".gse":
@@ -209,6 +315,17 @@ class Project:
         print(f'Saved to {path}\n{self.__dict__}')
 
     def load(self, path: PathType) -> None:
+        """
+        Load objects to gse.Project class from a file, completely with a ".gse" or partially with a ".json" \n
+        E.g.
+            type(p.input_clip).__qualname__ \n
+            # NoneType \n
+            p.load("project.gse") \n
+            type(p.input_clip).__qualname__ \n
+            # VideoFileClip
+
+        :param path: path to the file to load from
+        """
         file_type = splitext(path)[1]
         with open(path, "rb") as project_file:
             if file_type == ".gse":
@@ -223,6 +340,24 @@ class Project:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
 
     def processes(self, processes: Iterable[int] = range(4), asker: Callable[[Any], Any] = input, **update_args):
+        """
+        Run gse functions in a default way, according to gse.Project
+        configuration variables, but allowing to modify pieces of the process.
+
+        function 0: gse.get_input_clip \n
+        function 1: gse.get_mask_clip \n
+        function 2: gse.get_final_clip \n
+        function 3: gse.save_to_file
+
+        E.g.
+            p.processes() \n
+            p.processes([1], write_logfile=True) \n
+            p.processes(range(3), lambda _: None) \n
+
+        :param processes: list, iterable with the number(s) of desired function(s)
+        :param asker: parameter of gse.Project.var
+        :param update_args: optional arguments to overwrite default ones in each function
+        """
         if 0 in processes:
             args = {"path": self.var("input", str, asker=asker),
                     "resize_algorithm": self.var("scaler", str, asker=asker)}
