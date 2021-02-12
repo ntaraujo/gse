@@ -15,7 +15,7 @@ from dill import load as dload
 from os.path import dirname, basename, splitext, abspath
 from os.path import join as join_path
 from ast import literal_eval
-from typing import Union, Optional, Callable, Any, IO, Iterable, NewType, List
+from typing import Union, Optional, Callable, Any, IO, Iterable, NewType, List, Dict
 from os import PathLike
 from numpy import ndarray
 
@@ -346,7 +346,8 @@ class Project:
             else:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
 
-    def processes(self, processes: Iterable[int] = range(4), asker: Callable[[Any], Any] = input, **update_args):
+    def processes(self, processes: Union[Iterable[int], int] = range(4), local: Optional[bool] = None,
+                  asker: Callable[[Any], Any] = input, **update_args):
         """
         Run gse functions in a default way, according to gse.Project
         configuration variables, but allowing to modify pieces of the process.
@@ -358,15 +359,24 @@ class Project:
 
         E.g.
             p.processes() \n
-            p.processes([1], write_logfile=True) \n
+            p.processes(1, write_logfile=True) \n
             p.processes(range(3), lambda _: None) \n
+            p.processes([1, 2, 3], False, mask="video_with_beautiful_shapes.mp4")
 
-        :param processes: list, iterable with the number(s) of desired function(s)
+        :param processes: number(s) of desired function(s), order of execution is always crescent
+        :param local: when True, this do not rewrite any class variable, including p.input_clip, etc.
+        When "update_args" is empty, the default is False. Otherwise, the default is True
         :param asker: parameter of gse.Project.var
-        :param update_args: optional arguments to overwrite default ones in each function
+        :param update_args: optional arguments to overwrite default ones in first function asked with "processes".
         """
         def var(name: str, converter: Union[type, str, None]):
             return self.var(name, converter, asker)
+
+        def up(original: Dict[str, Any], stage: int) -> Dict[str, Any]:
+            if processes[0] == stage:
+                return {**original, **update_args}
+            else:
+                return original
 
         def compatibility(wrong: str, right: str):
             if wrong in update_args:
@@ -377,42 +387,46 @@ class Project:
         compatibility("compression", "preset")
         compatibility("log", "write_logfile")
 
+        if type(processes) == int:
+            processes = [processes]
+
+        temp_input = self.input_clip
+        temp_mask = self.mask_clip
+        temp_final = self.final_clip
+        temp_audio = self.audio
+
         if 0 in processes:
             args = {"input": var("input", str),
                     "resize_algorithm": var("scaler", str)}
 
-            self.input_clip = get_input_clip(**args)
+            temp_input = get_input_clip(**up(args, 0))
         if 1 in processes:
-            args = {"input_clip": self.input_clip,
+            args = {"input_clip": temp_input,
                     "relative_mask_fps": var("relative_mask_fps", int),
                     "relative_mask_resolution": var("relative_mask_resolution", int),
                     "mask": var("mask", str),
                     "cuda": var("cuda", bool),
                     "resize_algorithm": var("scaler", str)}
 
-            args.update(update_args)
-
-            self.mask_clip = get_mask_clip(**args)
+            temp_mask = get_mask_clip(**up(args, 0))
         if 2 in processes:
-            args = {"mask_clip": self.mask_clip,
-                    "input_clip": self.input_clip,
+            args = {"mask_clip": temp_mask,
+                    "input_clip": temp_input,
                     "background": var("background", "auto"),
                     "resize_algorithm": var("scaler", str)}
 
-            args.update(update_args)
-
-            self.final_clip = get_final_clip(**args)
+            temp_final = get_final_clip(**up(args, 0))
         if 3 in processes:
             file = '.'.join([var("output_name", str), var("extension", str)])
             path = abspath(join_path(var("output_dir", str), file))
             if var("background", "auto") == "":
-                self.audio = False
+                temp_audio = False
 
-            args = {"clip": self.final_clip,
+            args = {"final_clip": temp_final,
                     "output": path,
                     "get_frame": var("get_frame", int),
                     "preset": var("compression", str),
-                    "audio": self.audio,
+                    "audio": temp_audio,
                     "write_logfile": var("log", bool),
                     "threads": var("threads", int)}
             if var("video_codec", "auto"):
@@ -420,9 +434,13 @@ class Project:
             if var("audio_codec", "auto"):
                 args["audio_codec"] = var("audio_codec", str)
 
-            args.update(update_args)
+            save_to_file(**up(args, 0))
 
-            save_to_file(**args)
+        if (local is None and not update_args) or not local:
+            self.input_clip = temp_input
+            self.mask_clip = temp_mask
+            self.final_clip = temp_final
+            self.audio = temp_audio
 
 
 class Timer:
