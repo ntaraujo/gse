@@ -99,17 +99,17 @@ p.load("my_project.gse")  # replace the Project variables with previous saved on
 
 p.processes()  # do all at once
 
-p.relative_mask_fps = 60  # Modify a single variable
+p.relative_mask_fps = 60  # Modify a single configuration variable
 
 # Load the input file and let it available as p.input_clip
-p.processes([0])
+p.processes(0)
 
 # Change the video duration to 6 seconds
 # See what is possible at https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html
 p.input_clip = p.input_clip.set_duration(6)
 
 # Load the mask and let it available as p.mask_clip
-p.processes([1])
+p.processes(1)
 
 # Add a 2-second fade in effect to the mask
 # See other effects in https://zulko.github.io/moviepy/ref/videofx.html
@@ -117,30 +117,30 @@ from moviepy.video.fx.fadein import fadein
 p.mask_clip = p.mask_clip.fx(fadein, 2)
 
 # Make the final clip based on the background choice and let it available as p.final_clip
-p.processes([2])
+p.processes(2)
 
 # Check the final clip duration
 print(p.final_clip.duration)
 
 # Export to file
-p.processes([3])
+p.processes(3)
 
-# Use another mask with another resolution, but with the same input
-p.mask = "video_with_beautiful_shapes.mp4"
-p.relative_mask_resolution = 61
-p.processes([1, 2, 3])
+# Use another mask with another resolution, without changing the class variables
+p.processes((1, 2, 3),
+            mask="video_with_beautiful_shapes.mp4",
+            relative_mask_resolution=61)
 
-# Use another background with the same mask and input
-p.background = [0, 0, 255]
-p.processes([2, 3])
+# Change the background & the class variables
+p.processes((2, 3), local=False, background=[0, 0, 255])
 
 # Just export a preview of the video, with the same mask, input and background
-p.processes([3], frame=578)
+p.processes(3, get_frame=578)
 
 # In IPython Notebook you can also preview with the following, where t is measured in seconds
 p.final_clip.ipython_display(t=15)
 
-# Note that for video, the longest time is spent in gse.save_to_file(), so there is no much to do for saving this time
+# Note that for video, the longest time is spent in gse.save_to_file() or
+# gse.Project.process(3), so there is no much to do for saving this time
 
 # Save the entire Project to use after
 p.save("my_project.gse")
