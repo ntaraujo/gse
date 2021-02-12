@@ -94,26 +94,26 @@ FinalClipType = NewType('FinalClipType', Union[ClipType, CompositeVideoClip])
 PathType = Union[str, bytes, PathLike]
 
 
-def get_input_clip(path: PathType, **videofileclip_args) -> ClipType:
+def get_input_clip(input: PathType, **videofileclip_args) -> ClipType:
     """
     Returns a moviepy clip for using with gse \n
     E.g.
         input_clip = get_input_clip("video.mp4") \n
         mask_clip = get_mask_clip(input_clip)
 
-    :param path: video/image path
+    :param input: video/image path
     :param videofileclip_args: additional arguments for moviepy.video.io.VideoFileClip.__init__
     """
-    if is_image(path):
-        print(f"Loading {path} as the main image source")
-        return ImageClip(path, duration=1).set_fps(1)
+    if is_image(input):
+        print(f"Loading {input} as the main image source")
+        return ImageClip(input, duration=1).set_fps(1)
     else:
-        print(f"Loading {path} as the main video source")
-        return VideoFileClip(path, **videofileclip_args)
+        print(f"Loading {input} as the main video source")
+        return VideoFileClip(input, **videofileclip_args)
 
 
 def get_mask_clip(input_clip: ClipType, relative_mask_fps: int = 100, relative_mask_resolution: int = 100,
-                  mask_path: PathType = "", cuda: bool = True, **videofileclip_args) -> ClipType:
+                  mask: PathType = "", cuda: bool = True, **videofileclip_args) -> ClipType:
     """
     Returns a moviepy clip with the right attributes to be used as mask for the input_clip \n
     E.g.
@@ -123,17 +123,17 @@ def get_mask_clip(input_clip: ClipType, relative_mask_fps: int = 100, relative_m
     :param input_clip: got with gse.get_input_clip
     :param relative_mask_fps: percentage. How fluid is the movement of the mask that accompanies the person movement?
     :param relative_mask_resolution: percentage. The quality and accuracy of the mask
-    :param mask_path: if you want to use a saved mask video instead the A.I. generated one
+    :param mask: if you want to use a saved mask video instead the A.I. generated one
     :param cuda: should part of the process occur on Nvidia GPU?
     :param videofileclip_args: additional arguments for moviepy.video.io.VideoFileClip.__init__
     """
-    if mask_path != "":  # if given
-        if is_image(mask_path):
-            print(f"Loading the image {mask_path} as the mask for {input_clip.filename}")
-            return ImageClip(mask_path, duration=input_clip.duration)
+    if mask != "":  # if given
+        if is_image(mask):
+            print(f"Loading the image {mask} as the mask for {input_clip.filename}")
+            return ImageClip(mask, duration=input_clip.duration)
         else:
-            print(f"Loading the video {mask_path} as the mask for {input_clip.filename}")
-            return VideoFileClip(mask_path, **videofileclip_args) \
+            print(f"Loading the video {mask} as the mask for {input_clip.filename}")
+            return VideoFileClip(mask, **videofileclip_args) \
                 .fx(loop, duration=input_clip.duration).set_duration(input_clip.duration)
     else:  # if should be result of A.I.
         process_clip = input_clip.copy()
@@ -209,8 +209,9 @@ def smooth_composite(back: ClipType, front: ClipType):
     return CompositeVideoClip([back, front.set_position("center")], size=front.size)
 
 
-def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, frame: int = 0,
-                 alpha: bool = False, **write_videofile_args):
+def save_to_file(final_clip: FinalClipType, output: Optional[PathType], get_frame_from_time: int = 0,
+                 get_frame: int = 0, alpha: bool = False, output_dir: Optional[PathType] = None,
+                 output_name: Optional[str] = None, extension: Optional[str] = None, **write_videofile_args):
     """
     Write a moviepy clip with the attribute clip.filename as video or image if the filename refers to an image or if
     asked explicitly \n
@@ -219,23 +220,29 @@ def save_to_file(clip: FinalClipType, path: PathType, frame_from_time: int = 0, 
         from IPython.display import Video \n
         Video("path/video.mp4")
 
-    :param clip: got with gse.get_final_clip
-    :param path: where and with what name and extension the clip should be saved
-    :param frame_from_time: if you want to extract the frame at X seconds
-    :param frame: if you want to extract the X° frame
+    :param final_clip: got with gse.get_final_clip
+    :param output: where and with what name and extension the clip should be saved
+    :param get_frame_from_time: if you want to extract the frame at X seconds
+    :param get_frame: if you want to extract the X° frame
     :param alpha: if image, should keep the alpha channel (transparency, .png)?
     :param write_videofile_args: additional arguments for moviepy.video.VideoClip.VideoClip.write_videofile
+    :param output_dir: for compatibility
+    :param output_name: for compatibility
+    :param extension: for compatibility
     """
-    if is_image(clip.filename) or frame or frame_from_time:
-        if frame:
-            frame_from_time = clip.fps / frame
-        elif not frame_from_time:
-            frame_from_time = clip.duration / 2
-        print(f'Saving as image to {path}')
-        clip.save_frame(path, t=frame_from_time, withmask=alpha)
+    if output_dir:
+        output = abspath(join_path(output_dir, f'{output_name}.{extension}'))
+
+    if is_image(final_clip.filename) or get_frame or get_frame_from_time:
+        if get_frame:
+            get_frame_from_time = final_clip.fps / get_frame
+        elif not get_frame_from_time:
+            get_frame_from_time = final_clip.duration / 2
+        print(f'Saving as image to {output}')
+        final_clip.save_frame(output, t=get_frame_from_time, withmask=alpha)
     else:
-        temp_audiofile = abspath(join_path(dirname(path), splitext(basename(path))[0] + '.mp3'))
-        clip.write_videofile(path, temp_audiofile=temp_audiofile, **write_videofile_args)
+        temp_audiofile = abspath(join_path(dirname(output), splitext(basename(output))[0] + '.mp3'))
+        final_clip.write_videofile(output, temp_audiofile=temp_audiofile, **write_videofile_args)
 
 
 class Project:
@@ -361,8 +368,17 @@ class Project:
         def var(name: str, converter: Union[type, str, None]):
             return self.var(name, converter, asker)
 
+        def compatibility(wrong: str, right: str):
+            if wrong in update_args:
+                update_args[right] = update_args[wrong]
+                del update_args[wrong]
+
+        compatibility("scaler", "resize_algorithm")
+        compatibility("compression", "preset")
+        compatibility("log", "write_logfile")
+
         if 0 in processes:
-            args = {"path": var("input", str),
+            args = {"input": var("input", str),
                     "resize_algorithm": var("scaler", str)}
 
             self.input_clip = get_input_clip(**args)
@@ -370,7 +386,7 @@ class Project:
             args = {"input_clip": self.input_clip,
                     "relative_mask_fps": var("relative_mask_fps", int),
                     "relative_mask_resolution": var("relative_mask_resolution", int),
-                    "mask_path": var("mask", str),
+                    "mask": var("mask", str),
                     "cuda": var("cuda", bool),
                     "resize_algorithm": var("scaler", str)}
 
@@ -393,8 +409,8 @@ class Project:
                 self.audio = False
 
             args = {"clip": self.final_clip,
-                    "path": path,
-                    "frame": var("get_frame", int),
+                    "output": path,
+                    "get_frame": var("get_frame", int),
                     "preset": var("compression", str),
                     "audio": self.audio,
                     "write_logfile": var("log", bool),
