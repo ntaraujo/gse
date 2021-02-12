@@ -379,15 +379,15 @@ class Control(EventDispatcher):
 
     def call_input(self):
         self.base_check(None, 0)
-        self.do_again(1)
+        # self.do_again(1)
 
     def call_mask(self):
         self.base_check(0, 1)
-        self.do_again(2)
+        # self.do_again(2)
 
     def call_background(self):
         self.base_check(1, 2)
-        self.do_again(3)
+        # self.do_again(3)
 
     def call_save(self):
         self.base_check(2, 3)
