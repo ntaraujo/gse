@@ -215,7 +215,7 @@ class Advanced(MDScreen):
 
     def second_step_preview(self):
         tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
-        app.ctrl.p.processes([3], path=self.frame_filename, frame_from_time=tim)
+        app.ctrl.p.processes(3, False, output=self.frame_filename, get_frame_from_time=tim)
         app.ctrl.do_lock.release()
         self.update_preview_image()
         print("Image preview updated")
@@ -230,7 +230,7 @@ class Advanced(MDScreen):
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
         filename = os.path.join(self.tempdir, f"temp_video.{ext}")
 
-        app.ctrl.p.processes([3], path=filename, logger=MyLogger())
+        app.ctrl.p.processes(3, False, output=filename, logger=MyLogger())
         app.ctrl.do_lock.release()
 
     @mainthread
@@ -360,9 +360,9 @@ class Control(EventDispatcher):
             self.doing[n] = True
             print(f"Process {n} started")
             if n == 3:
-                self.p.processes([3], logger=MyLogger())
+                self.p.processes(3, False, logger=MyLogger())
             else:
-                self.p.processes([n])
+                self.p.processes(n)
             self.done[n] = True
             print(f"Process {n} finished")
 
