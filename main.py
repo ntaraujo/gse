@@ -21,6 +21,7 @@ from proglog import TqdmProgressBarLogger
 from mytqdm import mytqdm
 from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
 from kivymd.uix.list import OneLineIconListItem
+import traceback
 
 
 class MyLogger(TqdmProgressBarLogger):
@@ -50,9 +51,10 @@ class MyThread(threading.Thread):
                 self.target(*self.args)
             else:
                 self.target()
-        except Exception as e:
+        except Exception:
             arg_txt = f"{self.args} as arguments" if self.args else "no arguments"
-            print(f"Exception in {self.target} with {arg_txt}\n{e}")
+            print(f"Exception in {self.target} with {arg_txt}")
+            traceback.print_exc()
             if app.ctrl.do_lock.locked():
                 app.ctrl.do_lock.release()
 
