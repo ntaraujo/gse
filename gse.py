@@ -445,17 +445,17 @@ class Project:
 
 class Timer:
     def __init__(self):
-        self.hours = self.minutes = self.seconds = self.starttime = self.stoptime = 0
+        self.hours = self.minutes = self.seconds = self.start_time = self.stop_time = 0
         self.start()
 
     def start(self):
-        self.starttime = self.stoptime = perf_counter()
+        self.start_time = self.stop_time = perf_counter()
 
     def stop(self):
-        self.stoptime = perf_counter()
+        self.stop_time = perf_counter()
 
     def sec_duration(self):
-        return self.stoptime - self.starttime
+        return self.stop_time - self.start_time
 
     def set_hours(self):
         duration = self.sec_duration()
