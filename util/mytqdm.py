@@ -3,13 +3,26 @@ from datetime import datetime, timedelta
 from tqdm import tqdm
 from tqdm.std import Bar
 from tqdm.utils import _unicode, _is_ascii, FormatReplace, disp_len, disp_trim
+from proglog import TqdmProgressBarLogger
+
+
+mytqdm_callback = lambda _: None
+
+
+class MyLogger(TqdmProgressBarLogger):
+
+    def __init__(self, my_callback, *args, **kwargs):
+        global mytqdm_callback
+        mytqdm_callback = my_callback
+        super().__init__(*args, **kwargs)
+        self.tqdm = mytqdm
 
 
 class mytqdm(tqdm):
 
-    @staticmethod
-    def my_callback(format_dict):
-        print(format_dict)
+    def mytqdm_callback(self, format_dict):
+        global mytqdm_callback
+        mytqdm_callback(self, format_dict)
 
     def format_meter(self, n, total, elapsed, ncols=None, prefix='', ascii=False,
                      unit='it', unit_scale=False, rate=None, bar_format=None,
@@ -179,7 +192,7 @@ class mytqdm(tqdm):
                     bar_format = bar_format.replace("{desc}: ", '')
             else:
                 bar_format = "{l_bar}{bar}{r_bar}"
-            self.my_callback(format_dict)
+            self.mytqdm_callback(format_dict)
 
             full_bar = FormatReplace()
             try:
@@ -207,7 +220,7 @@ class mytqdm(tqdm):
             # user-specified bar_format but no total
             l_bar += '|'
             format_dict.update(l_bar=l_bar, percentage=0)
-            self.my_callback(format_dict)
+            self.mytqdm_callback(format_dict)
             full_bar = FormatReplace()
             nobar = bar_format.format(bar=full_bar, **format_dict)
             if not full_bar.format_called:

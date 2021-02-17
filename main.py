@@ -18,26 +18,16 @@ from threading import Thread, Lock
 from time import sleep
 from tempfile import mkdtemp
 from shutil import rmtree
-from proglog import TqdmProgressBarLogger
-from util.mytqdm import mytqdm
+from util.mytqdm import MyLogger
 from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
 from kivymd.uix.list import OneLineIconListItem
 from traceback import print_exc
 
 
-class MyLogger(TqdmProgressBarLogger):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.tqdm = MyTqdmWithCallback
-
-
-class MyTqdmWithCallback(mytqdm):
-
-    def my_callback(self, format_dict):
-        if app.sm.current == "advanced":
-            time = self.format_interval(format_dict["elapsed_s"] + format_dict["remaining_s"])
-            app.advanced.update_time(format_dict["n"] * 10, time)
+def my_callback(self, format_dict):
+    if app.sm.current == "advanced":
+        time = self.format_interval(format_dict["elapsed_s"] + format_dict["remaining_s"])
+        app.advanced.update_time(format_dict["n"] * 10, time)
 
 
 class MyThread(Thread):
@@ -236,7 +226,7 @@ class Advanced(MDScreen):
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
         filename = pjoin(self.tempdir, f"temp_video.{ext}")
 
-        app.ctrl.p.processes(3, False, output=filename, logger=MyLogger())
+        app.ctrl.p.processes(3, False, output=filename, logger=MyLogger(my_callback))
         app.ctrl.do_lock.release()
 
     @mainthread
@@ -366,7 +356,7 @@ class Control(EventDispatcher):
             self.doing[n] = True
             print(f"Process {n} started")
             if n == 3:
-                self.p.processes(3, False, logger=MyLogger())
+                self.p.processes(3, False, logger=MyLogger(my_callback))
             else:
                 self.p.processes(n)
             self.done[n] = True
