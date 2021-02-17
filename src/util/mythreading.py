@@ -38,6 +38,9 @@ class MyThread(Thread):
 
 
 def default_exc_callback(target: target_type, args: Iterable, kwargs: kwargs_type, traceback: str) -> None:
+    """
+    Default exception callback for MyThread. Pretty print the error and where happened
+    """
     func = f'{target.__name__}('
     for a in args:
         func += f'{a}, '
