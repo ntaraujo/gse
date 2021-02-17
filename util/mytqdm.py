@@ -3,17 +3,9 @@ from tqdm import tqdm
 from tqdm.std import Bar
 from tqdm.utils import _unicode, _is_ascii, FormatReplace, disp_len, disp_trim
 from proglog import TqdmProgressBarLogger
+from typing import Callable, Type, Dict, Any
 
 
-
-
-class MyLogger(TqdmProgressBarLogger):
-
-    def __init__(self, my_callback, *args, **kwargs):
-        global mytqdm_callback
-        mytqdm_callback = my_callback
-        super().__init__(*args, **kwargs)
-        self.tqdm = mytqdm
 mytqdm_callback = lambda s, f: None
 
 
@@ -237,3 +229,17 @@ class mytqdm(tqdm):
             return ((prefix + ": ") if prefix else '') + \
                 '{0}{1} [{2}, {3}{4}]'.format(
                     n_fmt, unit, elapsed_str, rate_fmt, postfix)
+
+
+class MyLogger(TqdmProgressBarLogger):
+
+    def __init__(self, my_callback: Callable[[Type[mytqdm], Dict[str, Any]], Any], *args, **kwargs):
+        """
+        TqdmProgressBarLogger but calls a function for each state update in each tqdm progress bar.
+
+        :param my_callback: arguments are the tqdm instance and a dict with the state values.
+        """
+        global mytqdm_callback
+        mytqdm_callback = my_callback
+        super().__init__(*args, **kwargs)
+        self.tqdm = mytqdm
