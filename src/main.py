@@ -2,13 +2,11 @@ from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.filemanager import MDFileManager
 from os.path import join as pjoin
-from os.path import expanduser, dirname, abspath
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty, BooleanProperty
 from kivy.event import EventDispatcher
 from kivymd.uix.picker import MDTimePicker, MDDatePicker
 from datetime import datetime
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.stacklayout import MDStackLayout
 from gse import Project
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
@@ -19,9 +17,11 @@ from time import sleep
 from tempfile import mkdtemp
 from shutil import rmtree
 from util.mytqdm import MyLogger
-from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
-from kivymd.uix.list import OneLineIconListItem
-from util.screens.screens import *
+from kivymd.uix.navigationdrawer import MDNavigationLayout
+from kivymd.uix.screen import MDScreen
+from util.screens.screens import Welcome, Background, Colors, Time, Ready
+from util.widgets.widgets import LeftMenu
+from os.path import expanduser, dirname, abspath
 
 
 def my_callback(self, format_dict):
@@ -34,28 +34,6 @@ def exc_callback(*not_using):
     default_exc_callback(*not_using)
     if app.ctrl.do_lock.locked():
         app.ctrl.do_lock.release()
-
-
-class ItemDrawer(OneLineIconListItem):
-    icon = StringProperty()
-    to_screen = StringProperty()
-
-
-class LeftMenu(MDNavigationDrawer):
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        icons_item = {
-            "home": ["Home page", "welcome"],
-            "folder-multiple-image": ["Choose the background", "background"],
-            "clock-check-outline": ["Processing time", "time"],
-            "export": ["Export", "ready"],
-            "cog-outline": ["Advanced options", "advanced"],
-        }
-        for icon_name in icons_item.keys():
-            self.ids.drawer_list.add_widget(
-                ItemDrawer(icon=icon_name, text=icons_item[icon_name][0], to_screen=icons_item[icon_name][1])
-            )
 
 
 class Advanced(MDScreen):
@@ -220,20 +198,6 @@ class Advanced(MDScreen):
     def update_time(self, bar, label):
         self.ids.time_bar.value = bar
         self.ids.time_label.text = label
-
-
-class CenteredStackLayout(MDStackLayout):
-    bigchild = NumericProperty()
-
-    def do_layout(self, *args):
-        super().do_layout(*args)
-        self.set_bigchild()
-
-    def set_bigchild(self):
-        bigchild = 0
-        for child in self.children:
-            bigchild += child.width
-        self.bigchild = bigchild + self.spacing[1] * 9
 
 
 class Monitor(MDCheckbox):
