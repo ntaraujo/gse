@@ -1,9 +1,8 @@
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
-from kivymd.uix.screen import MDScreen
 from kivymd.uix.filemanager import MDFileManager
 from os.path import join as pjoin
-from os.path import expanduser
+from os.path import expanduser, dirname, abspath
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty, BooleanProperty
 from kivy.event import EventDispatcher
 from kivymd.uix.picker import MDTimePicker, MDDatePicker
@@ -22,6 +21,7 @@ from shutil import rmtree
 from util.mytqdm import MyLogger
 from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
 from kivymd.uix.list import OneLineIconListItem
+from util.screens.screens import *
 
 
 def my_callback(self, format_dict):
@@ -56,22 +56,6 @@ class LeftMenu(MDNavigationDrawer):
             self.ids.drawer_list.add_widget(
                 ItemDrawer(icon=icon_name, text=icons_item[icon_name][0], to_screen=icons_item[icon_name][1])
             )
-
-
-class Welcome(MDScreen):
-    pass
-
-
-class Background(MDScreen):
-    pass
-
-
-class Colors(MDScreen):
-    pass
-
-
-class Time(MDScreen):
-    pass
 
 
 class Advanced(MDScreen):
@@ -257,18 +241,17 @@ class Monitor(MDCheckbox):
         app.ctrl.monitor = self.op
 
 
-class Ready(MDScreen):
-    pass
-
-
 def property_callback(instance, value, var_name):
     instance.p.__dict__[var_name] = value
     write = f'"{value}"' if type(value) == str else value
     print(f'{instance.p}.{var_name} changed to {write}')
 
 
+this_dir = dirname(abspath(__file__))
+
+
 class Control(EventDispatcher):
-    p = Project('../data/config.json')
+    p = Project(pjoin(this_dir, '../data/config.json'))
 
     conf = {'input': (str, False),
             'output_dir': (str, False),
@@ -387,6 +370,7 @@ class GSE(MDApp):
             exit_manager=self.exit_manager,
             select_path=self.select_path,
         )
+        self.drawer = None
 
     def ready_output(self, inst):
         strs = inst.text.split(".")
@@ -461,11 +445,11 @@ class GSE(MDApp):
 
         self.change()
 
-        drawer = LeftMenu(type="standard")
+        self.drawer = LeftMenu(type="standard")
 
         nav = MDNavigationLayout()
         nav.add_widget(self.sm)
-        nav.add_widget(drawer)
+        nav.add_widget(self.drawer)
 
         return nav
 

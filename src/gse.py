@@ -481,7 +481,9 @@ class Timer:
 if __name__ == '__main__':
     t = Timer()
 
-    p = Project("../data/config.json")
+    this_dir = dirname(abspath(__file__))
+
+    p = Project(join_path(this_dir, "../data/config.json"))
     p.processes()
 
     t.finish()
