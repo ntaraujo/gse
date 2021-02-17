@@ -19,7 +19,7 @@ from time import sleep
 from tempfile import mkdtemp
 from shutil import rmtree
 from proglog import TqdmProgressBarLogger
-from mytqdm import mytqdm
+from util.mytqdm import mytqdm
 from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
 from kivymd.uix.list import OneLineIconListItem
 from traceback import print_exc
