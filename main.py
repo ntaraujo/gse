@@ -30,7 +30,7 @@ def my_callback(self, format_dict):
         app.advanced.update_time(format_dict["n"] * 10, time)
 
 
-def exc_callback(*args):
+def exc_callback(*not_using):
     if app.ctrl.do_lock.locked():
         app.ctrl.do_lock.release()
 
