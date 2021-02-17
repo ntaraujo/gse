@@ -46,5 +46,6 @@ def default_exc_callback(target: target_type, args: Iterable, kwargs: kwargs_typ
         func += f'{a}, '
     for k, a in kwargs.items():
         func += f'{k}={a}, '
-    func = func[:-2] + ')'
+    func += ')'
+    func = func.replace(', )', ')')
     print(f"Exception in {target}\n\n{func}\n\n{traceback}")
