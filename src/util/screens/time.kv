@@ -1,0 +1,36 @@
+<Time>
+    name: "time"
+    md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "How fast should be the processing to the new background:"
+            halign: "center"
+            font_size: "30sp"
+        MDLabel:
+            text: str(app.ctrl.background) if app.ctrl.background != "" else "no one"
+            halign: "center"
+            font_size: "30sp"
+            bold: True
+        MDBoxLayout:
+            padding: "15sp"
+            spacing: "15sp"
+            size_hint_y: None
+            height: self.minimum_height + sp(60)
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Default"
+                    on_release: app.change()
+                    font_size: "20sp"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Choose a deadline"
+                    on_release: app.show_date_picker()
+                    disabled: True
+                    font_size: "20sp"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Go to advanced options"
+                    on_release: app.change("advanced")
+                    font_size: "20sp"
+    Menu

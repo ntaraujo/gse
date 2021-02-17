@@ -1,0 +1,37 @@
+<Background>
+    name: "background"
+    md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "Which should be the new background to the file?"
+            halign: "center"
+            font_size: "30sp"
+        MDLabel:
+            text: app.ctrl.input
+            halign: "center"
+            font_size: "30sp"
+            bold: True
+        MDBoxLayout:
+            padding: "15sp"
+            spacing: "15sp"
+            size_hint_y: None
+            height: self.minimum_height + sp(60)
+            AnchorLayout:
+                MDFlatButton:
+                    text: "No one (export the mask)"
+                    on_release: app.ctrl.background = ""
+                    on_release: app.ctrl.do_again(2)
+                    on_release: app.change()
+                    font_size: "20sp"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Color"
+                    on_release: app.change("colors")
+                    font_size: "20sp"
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Image/Video"
+                    on_release: app.file_manager_open()
+                    font_size: "20sp"
+    Menu

@@ -1,0 +1,28 @@
+<Welcome>:
+    name: "welcome"
+    md_bg_color: app.theme_cls.primary_color
+    MDBoxLayout:
+        orientation: "vertical"
+        MDLabel:
+            text: "Welcome to Green Screen Emulator"
+            halign: "center"
+            font_size: "50sp"
+            bold: True
+        MDBoxLayout:
+            padding: "15sp"
+            spacing: "15sp"
+            size_hint_y: None
+            height: self.minimum_height + sp(50)
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Open the last project"
+                    on_release: app.change("advanced")
+                    font_size: "20sp"
+                    disabled: True
+            AnchorLayout:
+                MDFlatButton:
+                    text: "Upload new source"
+                    on_release: app.file_manager_open()
+                    on_release: app.go_to = ["ready", "time", "background"]
+                    font_size: "20sp"
+    Menu

@@ -1,0 +1,25 @@
+<Colors>
+    name: "colors"
+    md_bg_color: cp.color[0], cp.color[1], cp.color[2], 1
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: "15sp"
+        spacing: "15sp"
+        MDLabel:
+            text: "Note alpha channel is not supported"
+            halign: "center"
+            font_size: "30sp"
+            adaptive_height: True
+        ColorPicker:
+            id: cp
+            color: 0, 1, 0, 1
+    AnchorLayout:
+        padding: "10sp"
+        anchor_x: "right"
+        anchor_y: "bottom"
+        MDFloatingActionButton:
+            icon: "check"
+            on_release: app.change()
+            on_release: app.ctrl.background = [c * 255 for c in [cp.color[0], cp.color[1], cp.color[2]]]
+            on_release: app.ctrl.do_again(2)
+    Menu
