@@ -24,12 +24,10 @@ class MyThread(Thread):
         :param t_kwargs: key word arguments for Thread
         """
         super().__init__(daemon=daemon, *t_args, **t_kwargs)
-        self.target, self.args, self.kwargs = target, list(), dict()
+        self.target = target
+        self.args = args if args else tuple()
+        self.kwargs = kwargs if kwargs else dict()
         self.exc_callback = exc_callback if exc_callback else default_exc_callback
-        if args:
-            self.args = args
-        if kwargs:
-            self.kwargs = kwargs
 
     def run(self):
         try:
