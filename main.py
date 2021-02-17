@@ -15,7 +15,7 @@ from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivy.clock import mainthread
 from threading import Lock
-from util.mythreading import MyThread
+from util.mythreading import MyThread, default_exc_callback
 from time import sleep
 from tempfile import mkdtemp
 from shutil import rmtree
@@ -31,6 +31,7 @@ def my_callback(self, format_dict):
 
 
 def exc_callback(*not_using):
+    default_exc_callback(*not_using)
     if app.ctrl.do_lock.locked():
         app.ctrl.do_lock.release()
 
