@@ -2,7 +2,8 @@ from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.filemanager import MDFileManager
-import os
+from os.path import join as pjoin
+from os.path import expanduser
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty, BooleanProperty
 from kivy.event import EventDispatcher
 from kivymd.uix.picker import MDTimePicker, MDDatePicker
@@ -13,15 +14,15 @@ from gse import Project
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivy.clock import mainthread
-import threading
+from threading import Thread, Lock
 from time import sleep
-import tempfile
-import shutil
+from tempfile import mkdtemp
+from shutil import rmtree
 from proglog import TqdmProgressBarLogger
 from mytqdm import mytqdm
 from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
 from kivymd.uix.list import OneLineIconListItem
-import traceback
+from traceback import print_exc
 
 
 class MyLogger(TqdmProgressBarLogger):
@@ -39,7 +40,7 @@ class MyTqdmWithCallback(mytqdm):
             app.advanced.update_time(format_dict["n"] * 10, time)
 
 
-class MyThread(threading.Thread):
+class MyThread(Thread):
 
     def __init__(self, target, args=None, daemon=True, *idont, **know):
         super().__init__(daemon=daemon, *idont, **know)
@@ -54,7 +55,7 @@ class MyThread(threading.Thread):
         except Exception:
             arg_txt = f"{self.args} as arguments" if self.args else "no arguments"
             print(f"Exception in {self.target} with {arg_txt}")
-            traceback.print_exc()
+            print_exc()
             if app.ctrl.do_lock.locked():
                 app.ctrl.do_lock.release()
 
@@ -109,8 +110,8 @@ class Advanced(MDScreen):
                                                "area", "bicublin", "gauss", "sinc", "lanczos", "spline"]]
     mask_menu_items = [{"text": i} for i in ["A.I.", "Video/Image"]]
 
-    tempdir = tempfile.mkdtemp()
-    frame_filename = os.path.join(tempdir, "temp_preview.jpg")
+    tempdir = mkdtemp()
+    frame_filename = pjoin(tempdir, "temp_preview.jpg")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -228,7 +229,7 @@ class Advanced(MDScreen):
     def second_step_time(self):
         txt = self.ids.video_codec_button.text
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
-        filename = os.path.join(self.tempdir, f"temp_video.{ext}")
+        filename = pjoin(self.tempdir, f"temp_video.{ext}")
 
         app.ctrl.p.processes(3, False, output=filename, logger=MyLogger())
         app.ctrl.do_lock.release()
@@ -317,7 +318,7 @@ class Control(EventDispatcher):
             vars()['on_' + var_name] = lambda _, i, v, vn=var_name: property_callback(i, v, vn)
 
     ps = range(4)
-    do_lock = threading.Lock()
+    do_lock = Lock()
 
     fake_get_frame = NumericProperty(50)
 
@@ -417,7 +418,7 @@ class GSE(MDApp):
 
     def file_manager_open(self):
         # parent = os.path.dirname(os.path.abspath(os.getcwd()))
-        home = os.path.expanduser("~")
+        home = expanduser("~")
         self.file_manager.show(home)
         self.manager_open = True
 
@@ -430,7 +431,7 @@ class GSE(MDApp):
             self.ctrl.background = path
             self.ctrl.do_again(2)
         elif self.sm.current == "ready":
-            self.ctrl.output_dir = os.path.join(path, "")
+            self.ctrl.output_dir = pjoin(path, "")
         elif self.sm.current == "advanced":
             self.ctrl.mask = path
 
@@ -492,4 +493,4 @@ if __name__ == "__main__":
     Window.maximize()
     app = GSE()
     app.run()
-    shutil.rmtree(app.advanced.tempdir)
+    rmtree(app.advanced.tempdir)
