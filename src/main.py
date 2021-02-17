@@ -208,7 +208,9 @@ class Monitor(MDCheckbox):
 def property_callback(instance, value, var_name):
     instance.p.__dict__[var_name] = value
     write = f'"{value}"' if type(value) == str else value
-    print(f'{instance.p}.{var_name} changed to {write}')
+    parent_class_name = type(instance).__qualname__
+    class_name = type(instance.p).__qualname__
+    print(f'{class_name}.{var_name} changed to {write} - at {parent_class_name}')
 
 
 this_dir = dirname(abspath(__file__))
