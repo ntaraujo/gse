@@ -268,7 +268,7 @@ def property_callback(instance, value, var_name):
 
 
 class Control(EventDispatcher):
-    p = Project('config.json')
+    p = Project('../data/config.json')
 
     conf = {'input': (str, False),
             'output_dir': (str, False),

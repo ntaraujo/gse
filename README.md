@@ -52,20 +52,20 @@ pip install kivy[full] https://github.com/kivymd/KivyMD/archive/master.zip
 
 Run main.py:
 ```sh
-python main.py
+python src/main.py
 ```
 
 ## Use with a configuration file
 Rename `config.json.example` to `config.json` and edit the values to which attend your needs.
 E.g. on Linux:
 ```sh
-mv config.json.example config.json
-xdg-open config.json
+mv data/config.json.example data/config.json
+xdg-open data/config.json
 ```
 
 The file to run in this case is `gse.py`
 ```sh
-python gse.py
+python src/gse.py
 ```
 
 ## Basics of configuration file / variables
@@ -88,14 +88,16 @@ python gse.py
 ## Use with IPython Notebook or Python Console
 Can be useful if you want to save time, since when the program is run it loads a lot of stuff which will only be used with a single configuration file, a single output.
 Full docs [here](https://github.com/ntaraujo/gse/blob/master/gse.py)
+
 ```python
-import gse
+
+from src import gse
 
 p = gse.Project()  # load with no configuration
 
-p = gse.Project("config.json")  # load with a configuration file
+p = gse.Project("data/config.json")  # load with a configuration file
 
-p.load("my_project.gse")  # replace the Project variables with previous saved ones
+p.load("data/my_project.gse")  # replace the Project variables with previous saved ones
 
 p.processes()  # do all at once
 
@@ -114,6 +116,7 @@ p.processes(1)
 # Add a 2-second fade in effect to the mask
 # See other effects in https://zulko.github.io/moviepy/ref/videofx.html
 from moviepy.video.fx.fadein import fadein
+
 p.mask_clip = p.mask_clip.fx(fadein, 2)
 
 # Make the final clip based on the background choice and let it available as p.final_clip
@@ -143,7 +146,7 @@ p.final_clip.ipython_display(t=15)
 # gse.Project.process(3), so there is no much to do for saving this time
 
 # Save the entire Project to use after
-p.save("my_project.gse")
+p.save("data/my_project.gse")
 ```
 
 ## Some examples

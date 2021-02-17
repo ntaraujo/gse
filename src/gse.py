@@ -481,7 +481,7 @@ class Timer:
 if __name__ == '__main__':
     t = Timer()
 
-    p = Project("config.json")
+    p = Project("../data/config.json")
     p.processes()
 
     t.finish()
