@@ -1,4 +1,3 @@
-from __future__ import absolute_import, division
 from datetime import datetime, timedelta
 from tqdm import tqdm
 from tqdm.std import Bar
