@@ -2,6 +2,9 @@ from kivymd.uix.list import OneLineIconListItem
 from kivy.properties import StringProperty, NumericProperty
 from kivymd.uix.navigationdrawer import MDNavigationDrawer
 from kivymd.uix.stacklayout import MDStackLayout
+from kivy.lang.builder import Builder
+from os.path import dirname, abspath, join
+from glob import glob
 
 
 class ItemDrawer(OneLineIconListItem):
@@ -38,3 +41,10 @@ class CenteredStackLayout(MDStackLayout):
         for child in self.children:
             bigchild += child.width
         self.bigchild = bigchild + self.spacing[1] * 9
+
+
+this_dir = dirname(abspath(__file__))
+kvs = glob(join(this_dir, '*.kv'))
+
+for kv in kvs:
+    Builder.load_file(kv)

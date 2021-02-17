@@ -287,24 +287,6 @@
         on_release: app.drawer.set_state()
         user_font_size: "36sp"
 
-<ItemDrawer>
-    on_release: app.change(self.to_screen)
-
-    IconLeftWidget:
-        icon: root.icon
-        on_release: app.change(self.to_screen)
-
-<LeftMenu>
-    MDStackLayout:
-        orientation: "tb-lr"
-        MDList:
-            id: drawer_list
-
-<CenteredStackLayout>
-    adaptive_height: True
-    size_hint_x: None
-    width: self.parent.width if self.parent.width < self.bigchild else self.bigchild
-
 <Title@MDLabel>
     bold: True
     halign: "center"
