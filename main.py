@@ -14,14 +14,14 @@ from gse import Project
 from kivy.core.window import Window
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivy.clock import mainthread
-from threading import Thread, Lock
+from threading import Lock
+from util.mythreading import MyThread
 from time import sleep
 from tempfile import mkdtemp
 from shutil import rmtree
 from util.mytqdm import MyLogger
 from kivymd.uix.navigationdrawer import MDNavigationLayout, MDNavigationDrawer
 from kivymd.uix.list import OneLineIconListItem
-from traceback import print_exc
 
 
 def my_callback(self, format_dict):
@@ -30,24 +30,9 @@ def my_callback(self, format_dict):
         app.advanced.update_time(format_dict["n"] * 10, time)
 
 
-class MyThread(Thread):
-
-    def __init__(self, target, args=None, daemon=True, *idont, **know):
-        super().__init__(daemon=daemon, *idont, **know)
-        self.target, self.args = target, args
-
-    def run(self):
-        try:
-            if self.args:
-                self.target(*self.args)
-            else:
-                self.target()
-        except Exception:
-            arg_txt = f"{self.args} as arguments" if self.args else "no arguments"
-            print(f"Exception in {self.target} with {arg_txt}")
-            print_exc()
-            if app.ctrl.do_lock.locked():
-                app.ctrl.do_lock.release()
+def exc_callback(*args):
+    if app.ctrl.do_lock.locked():
+        app.ctrl.do_lock.release()
 
 
 class ItemDrawer(OneLineIconListItem):
@@ -141,8 +126,8 @@ class Advanced(MDScreen):
         self.mask_menu.bind(on_release=self.mask_menu_callback)
 
     def on_enter(self, *args):
-        MyThread(target=self.preview_queue).start()
-        MyThread(target=self.time_queue).start()
+        MyThread(target=self.preview_queue, exc_callback=exc_callback).start()
+        MyThread(target=self.time_queue, exc_callback=exc_callback).start()
 
     @staticmethod
     def video_codec_menu_callback(instance_menu, instance_menu_item):
@@ -339,7 +324,7 @@ class Control(EventDispatcher):
             sleep(1)
 
     def do_again(self, n):
-        MyThread(target=self.do_again_base, args=(n,)).start()
+        MyThread(target=self.do_again_base, args=(n,), exc_callback=exc_callback).start()
 
     def do_again_base(self, n):
         maxp = len(self.ps)
@@ -349,7 +334,7 @@ class Control(EventDispatcher):
         print(f"Processes from {n} until {maxp - 1} scheduled")
 
     def call(self, n):
-        MyThread(target=self.cs[n]).start()
+        MyThread(target=self.cs[n], exc_callback=exc_callback).start()
 
     def base_call(self, n):
         if not self.done[n]:
