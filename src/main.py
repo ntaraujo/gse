@@ -348,7 +348,7 @@ class Control(EventDispatcher):
             self.done[n] = True
             print(f"Process {n} finished")
 
-    def base_check(self, needed, next):
+    def base_check(self, needed, next_one):
         if needed is not None:
             if not self.is_("doing", needed):
                 self.do_lock.release()
@@ -356,7 +356,7 @@ class Control(EventDispatcher):
             self.lock_wait("done", needed)
         else:
             self.do_lock.acquire()
-        self.base_call(next)
+        self.base_call(next_one)
         self.do_lock.release()
 
     def call_input(self):
