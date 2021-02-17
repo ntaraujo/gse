@@ -16,9 +16,14 @@ class MyThread(Thread):
 
     @staticmethod
     def exc_callback(target, args, kwargs, traceback):
-        arg_txt = f"{args} as arguments" if args else "no arguments"
-        kwarg_txt = f"{kwargs} as key word arguments" if kwargs else "no key word arguments"
-        print(f"Exception in {target} with {arg_txt} and {kwarg_txt}:\n{traceback}")
+        func = f'{target.__name__}('
+        for a in args:
+            func += f'{a}, '
+        for k, a in kwargs.items():
+            func += f'{k}={a}, '
+        func += ')'
+        func = func.replace(', )', ')')
+        print(f"Exception in {target}\n\n{func}\n\n{traceback}")
 
     def run(self):
         try:
