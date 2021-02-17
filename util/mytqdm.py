@@ -5,7 +5,6 @@ from tqdm.utils import _unicode, _is_ascii, FormatReplace, disp_len, disp_trim
 from proglog import TqdmProgressBarLogger
 
 
-mytqdm_callback = lambda _: None
 
 
 class MyLogger(TqdmProgressBarLogger):
@@ -15,6 +14,7 @@ class MyLogger(TqdmProgressBarLogger):
         mytqdm_callback = my_callback
         super().__init__(*args, **kwargs)
         self.tqdm = mytqdm
+mytqdm_callback = lambda s, f: None
 
 
 class mytqdm(tqdm):
