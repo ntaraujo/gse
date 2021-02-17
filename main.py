@@ -154,7 +154,8 @@ class Advanced(MDScreen):
         MyThread(target=self.preview_queue).start()
         MyThread(target=self.time_queue).start()
 
-    def video_codec_menu_callback(self, instance_menu, instance_menu_item):
+    @staticmethod
+    def video_codec_menu_callback(instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
             app.ctrl.video_codec = None
         else:
@@ -162,7 +163,8 @@ class Advanced(MDScreen):
         instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
 
-    def audio_codec_menu_callback(self, instance_menu, instance_menu_item):
+    @staticmethod
+    def audio_codec_menu_callback(instance_menu, instance_menu_item):
         if "default" in instance_menu_item.text:
             app.ctrl.audio_codec = None
         else:
@@ -170,16 +172,19 @@ class Advanced(MDScreen):
         instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
 
-    def compression_menu_callback(self, instance_menu, instance_menu_item):
+    @staticmethod
+    def compression_menu_callback(instance_menu, instance_menu_item):
         app.ctrl.compression = instance_menu.caller.text = instance_menu_item.text
         instance_menu.dismiss()
 
-    def scaler_menu_callback(self, instance_menu, instance_menu_item):
+    @staticmethod
+    def scaler_menu_callback(instance_menu, instance_menu_item):
         app.ctrl.scaler = instance_menu.caller.text = instance_menu_item.text
         app.ctrl.do_again(1)
         instance_menu.dismiss()
 
-    def mask_menu_callback(self, instance_menu, instance_menu_item):
+    @staticmethod
+    def mask_menu_callback(instance_menu, instance_menu_item):
         if instance_menu_item.text == "A.I.":
             app.ctrl.mask = ""
             instance_menu.caller.text = "A.I."
@@ -347,11 +352,11 @@ class Control(EventDispatcher):
         MyThread(target=self.do_again_base, args=(n,)).start()
 
     def do_again_base(self, n):
-        max = len(self.ps)
+        maxp = len(self.ps)
         with self.do_lock:
-            for x in range(n, max):
+            for x in range(n, maxp):
                 self.done[x] = self.doing[x] = False
-        print(f"Processes from {n} until {max - 1} scheduled")
+        print(f"Processes from {n} until {maxp - 1} scheduled")
 
     def call(self, n):
         MyThread(target=self.cs[n]).start()
@@ -480,13 +485,13 @@ class GSE(MDApp):
 
         self.change()
 
-        self.drawer = LeftMenu(type="standard")
+        drawer = LeftMenu(type="standard")
 
-        self.nav = MDNavigationLayout()
-        self.nav.add_widget(self.sm)
-        self.nav.add_widget(self.drawer)
+        nav = MDNavigationLayout()
+        nav.add_widget(self.sm)
+        nav.add_widget(drawer)
 
-        return self.nav
+        return nav
 
 
 if __name__ == "__main__":
