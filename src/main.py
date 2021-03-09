@@ -217,7 +217,7 @@ this_dir = dirname(abspath(__file__))
 
 
 class Control(EventDispatcher):
-    p = Project(pjoin(this_dir, '../data/config.json'))
+    p = Project(pjoin(this_dir, '..', 'data', 'config.json'))
 
     conf = {'input': (str, False),
             'output_dir': (str, False),
