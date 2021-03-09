@@ -1,6 +1,6 @@
 .idea/
 test/
-data/config.json
+src/data/config.json
 test.py
 
 # Byte-compiled / optimized / DLL files

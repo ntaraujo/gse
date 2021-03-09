@@ -23,7 +23,7 @@ This project is based on [Deep BGRemove](https://github.com/WhiteNoise/deep-bgre
 Clone this repo:
 ```sh
 git clone https://github.com/ntaraujo/gse.git
-cd gse
+cd gse/src
 ```
 
 If you haven't, install python in your machine. Preferably [this release](https://www.python.org/downloads/release/python-386/)
@@ -65,7 +65,7 @@ xdg-open data/config.json
 
 The file to run in this case is `gse.py`
 ```sh
-python src/gse.py
+python gse.py
 ```
 
 ## Basics of configuration file / variables
