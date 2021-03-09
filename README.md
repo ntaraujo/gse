@@ -47,7 +47,7 @@ Install [kivy](https://kivy.org/doc/stable/gettingstarted/installation.html) and
 ([why](https://stackoverflow.com/questions/61307599/filemanager-code-using-kivymd-is-not-functioning)).
 E.g. on linux at the time of writing:
 ```sh
-pip install kivy[full] https://github.com/kivymd/KivyMD/archive/master.zip
+pip install kivy[base] https://github.com/kivymd/KivyMD/archive/master.zip
 ```
 
 Run main.py:
