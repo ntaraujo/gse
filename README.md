@@ -59,7 +59,7 @@ python src/main.py
 Rename `config.json.example` to `config.json` and edit the values to which attend your needs.
 E.g. on Linux:
 ```sh
-mv data/config.json.example data/config.json
+cp data/config.json.example data/config.json
 xdg-open data/config.json
 ```
 
