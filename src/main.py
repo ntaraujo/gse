@@ -235,7 +235,7 @@ class Control(EventDispatcher, Project):
     for v, c in conf.items():
         vars()[v] = property_to[c[0]](allownone=c[1])
 
-    del conf, property_to
+    del conf, property_to, v, c
 
     ps = range(4)
     do_lock = Lock()
