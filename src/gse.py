@@ -272,7 +272,7 @@ class Project:
         :param converter: if None, no converting, if "auto" find the probably right type, if a type e.g. bool, use it
         :param asker: function which returns a value for the given variable name, if the variable doesn't exist
         """
-        if var in self.__dict__:
+        if hasattr(self, var):
             return getattr(self, var)
         if asker == input:
             to_return = input(f'Variable {var}: ')
@@ -409,14 +409,14 @@ class Project:
                     "cuda": var("cuda", bool),
                     "resize_algorithm": var("scaler", str)}
 
-            temp_mask = get_mask_clip(**up(args, 0))
+            temp_mask = get_mask_clip(**up(args, 1))
         if 2 in processes:
             args = {"mask_clip": temp_mask,
                     "input_clip": temp_input,
                     "background": var("background", "auto"),
                     "resize_algorithm": var("scaler", str)}
 
-            temp_final = get_final_clip(**up(args, 0))
+            temp_final = get_final_clip(**up(args, 2))
         if 3 in processes:
             file = '.'.join([var("output_name", str), var("extension", str)])
             path = abspath(join_path(var("output_dir", str), file))
@@ -435,7 +435,7 @@ class Project:
             if var("audio_codec", "auto"):
                 args["audio_codec"] = var("audio_codec", str)
 
-            save_to_file(**up(args, 0))
+            save_to_file(**up(args, 3))
 
         if (local is None and not update_args) or not local:
             self.input_clip = temp_input
