@@ -272,8 +272,8 @@ class Project:
         :param converter: if None, no converting, if "auto" find the probably right type, if a type e.g. bool, use it
         :param asker: function which returns a value for the given variable name, if the variable doesn't exist
         """
-        if var in self.__dict__.keys():
-            return self.__dict__[var]
+        if var in self.__dict__:
+            return getattr(self, var)
         if asker == input:
             to_return = input(f'Variable {var}: ')
         else:
@@ -336,13 +336,14 @@ class Project:
         file_type = splitext(path)[1]
         with open(path, "rb") as project_file:
             if file_type == ".gse":
-                self.__dict__.update(dload(project_file).__dict__)
+                for var_name, value in dload(project_file).__dict__:
+                    setattr(self, var_name, value)
             elif file_type == ".json":
                 for var_name, value in jload(project_file).items():
                     if var_name[0] == '_' or (type(value) == str and value[:18] == '<<non-serializable'):
                         pass
                     else:
-                        self.__dict__[var_name] = value
+                        setattr(self, var_name, value)
             else:
                 raise Exception(f'Impossible to load file with extension "{file_type}". Accepted: ".gse" and ".json"')
 

@@ -134,10 +134,10 @@ class Advanced(MDScreen):
 
     def threads_button(self, up):
         if up:
-            app.ctrl.threads = app.ctrl.p.var("threads", int) + 1
+            app.ctrl.threads = app.ctrl.var("threads", int) + 1
         else:
-            app.ctrl.threads = app.ctrl.p.var("threads", int) - 1
-        self.ids.threads_label.text = f'{app.ctrl.p.var("threads", int)} threads'
+            app.ctrl.threads = app.ctrl.var("threads", int) - 1
+        self.ids.threads_label.text = f'{app.ctrl.var("threads", int)} threads'
 
     def preview_queue(self):
         while app.sm.current == "advanced":
@@ -158,8 +158,8 @@ class Advanced(MDScreen):
         self.second_step_preview()
 
     def second_step_preview(self):
-        tim = app.ctrl.fake_get_frame / app.ctrl.p.final_clip.fps
-        app.ctrl.p.processes(3, False, output=self.frame_filename, get_frame_from_time=tim)
+        tim = app.ctrl.fake_get_frame / app.ctrl.final_clip.fps
+        app.ctrl.processes(3, False, output=self.frame_filename, get_frame_from_time=tim)
         app.ctrl.do_lock.release()
         self.update_preview_image()
         print("Image preview updated")
@@ -174,7 +174,7 @@ class Advanced(MDScreen):
         ext = "mp4" if txt == "default" else txt.split(".")[-1].split(")")[0]
         filename = pjoin(self.tempdir, f"temp_video.{ext}")
 
-        app.ctrl.p.processes(3, False, output=filename, logger=MyLogger(my_callback))
+        app.ctrl.processes(3, False, output=filename, logger=MyLogger(my_callback))
         app.ctrl.do_lock.release()
 
     @mainthread
@@ -187,7 +187,7 @@ class Advanced(MDScreen):
 
     @mainthread
     def update_preview_slider(self):
-        self.ids.preview_slider.max = app.ctrl.p.final_clip.fps
+        self.ids.preview_slider.max = app.ctrl.final_clip.fps
 
     @mainthread
     def update_preview_image(self):
@@ -205,19 +205,10 @@ class Monitor(MDCheckbox):
         app.ctrl.monitor = self.op
 
 
-def property_callback(instance, value, var_name):
-    instance.p.__dict__[var_name] = value
-    write = f'"{value}"' if type(value) == str else value
-    parent_class_name = type(instance).__qualname__
-    class_name = type(instance.p).__qualname__
-    print(f'{class_name}.{var_name} changed to {write} - at {parent_class_name}')
-
-
 this_dir = dirname(abspath(__file__))
 
 
-class Control(EventDispatcher):
-    p = Project(pjoin(this_dir, 'data', 'config.json'))
+class Control(EventDispatcher, Project):
 
     conf = {'input': (str, False),
             'output_dir': (str, False),
@@ -241,19 +232,20 @@ class Control(EventDispatcher):
                    bool: BooleanProperty,
                    (str, list): ObjectProperty}
 
-    for var_name, variable in p.__dict__.items():
-        if var_name in conf.keys():
-            types, allownone = conf[var_name]
-            vars()[var_name] = property_to[types](variable, allownone=allownone)
-            vars()['on_' + var_name] = lambda _, i, v, vn=var_name: property_callback(i, v, vn)
+    for v, c in conf.items():
+        vars()[v] = property_to[c[0]](allownone=c[1])
+
+    del conf, property_to
 
     ps = range(4)
     do_lock = Lock()
 
     fake_get_frame = NumericProperty(50)
 
-    def __init__(self, **kwargs):
+    def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
+        Project.__init__(self, config)
+
         self.cs = [self.call_input, self.call_mask, self.call_background, self.call_save]
         self.doing = [False for _ in self.ps]
         self.done = [False for _ in self.ps]
@@ -291,9 +283,9 @@ class Control(EventDispatcher):
             self.doing[n] = True
             print(f"Process {n} started")
             if n == 3:
-                self.p.processes(3, False, logger=MyLogger(my_callback))
+                self.processes(3, False, logger=MyLogger(my_callback))
             else:
-                self.p.processes(n)
+                self.processes(n)
             self.done[n] = True
             print(f"Process {n} finished")
 
@@ -327,7 +319,7 @@ class Control(EventDispatcher):
 class GSE(MDApp):
     sm = advanced = None
     go_to = ["welcome"]
-    ctrl = Control()
+    ctrl = Control(pjoin(this_dir, 'data', 'config.json'))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
