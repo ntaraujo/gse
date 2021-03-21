@@ -1,25 +1,9 @@
-certifi==2020.12.5
-chardet==3.0.4
-dataclasses==0.6
-decorator==4.4.2
 dill==0.3.3
-docutils==0.16
-future==0.18.2
-idna==2.10
-imageio==2.9.0
-imageio-ffmpeg==0.4.2
-Kivy==2.0.0rc4
-Kivy-examples==2.0.0rc4
-Kivy-Garden==0.1.4
+Kivy==2.0.0
 kivymd @ https://github.com/kivymd/KivyMD/archive/master.zip
 moviepy==1.0.3
 numpy==1.19.4
-Pillow==8.1.1
 proglog==0.1.9
-Pygments==2.7.3
-requests==2.25.0
 torch==1.7.0+cpu
 torchvision==0.8.1+cpu
 tqdm==4.54.1
-typing-extensions==3.7.4.3
-urllib3==1.26.2
