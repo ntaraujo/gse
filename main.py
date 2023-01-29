@@ -5,7 +5,7 @@ from kivymd.uix.filemanager import MDFileManager
 import os
 from kivy.properties import StringProperty, ObjectProperty, NumericProperty, BooleanProperty
 from kivy.event import EventDispatcher
-from kivymd.uix.picker import MDTimePicker, MDDatePicker
+from kivymd.uix.pickers import MDTimePicker, MDDatePicker
 from datetime import datetime
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.stacklayout import MDStackLayout

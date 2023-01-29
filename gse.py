@@ -90,7 +90,7 @@ class MakeMask:
 
 
 ClipType = Union[VideoFileClip, ImageClip]
-FinalClipType = NewType('FinalClipType', Union[ClipType, CompositeVideoClip])
+FinalClipType = NewType('FinalClipType', [Union[ClipType, CompositeVideoClip]])
 PathType = Union[str, bytes, PathLike]
 
 
